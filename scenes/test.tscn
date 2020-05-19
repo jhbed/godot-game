@@ -1,0 +1,70 @@
+[gd_scene load_steps=6 format=2]
+
+[sub_resource type="PhysicsMaterial" id=1]
+friction = 0.0
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 510, 10 )
+
+[sub_resource type="PhysicsMaterial" id=3]
+friction = 5.0
+bounce = 0.3
+
+[sub_resource type="SegmentShape2D" id=4]
+a = Vector2( 1.56168, 41.0462 )
+b = Vector2( -10.0856, 134.779 )
+
+[sub_resource type="CircleShape2D" id=5]
+radius = 5.47918
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2( 511.411, 587.341 )
+physics_material_override = SubResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource( 2 )
+
+[node name="Line1" type="RigidBody2D" parent="."]
+position = Vector2( 327.167, 359.261 )
+rotation = 0.649262
+physics_material_override = SubResource( 3 )
+gravity_scale = 5.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Line1"]
+position = Vector2( 3.75834, -86.7719 )
+shape = SubResource( 4 )
+
+[node name="Line2" type="RigidBody2D" parent="."]
+position = Vector2( 430.991, 325.318 )
+rotation = -1.62839
+physics_material_override = SubResource( 3 )
+gravity_scale = 5.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Line2"]
+position = Vector2( 3.75834, -86.7719 )
+shape = SubResource( 4 )
+
+[node name="Elbow" type="Node2D" parent="."]
+position = Vector2( 367.489, 322.285 )
+
+[node name="Joint1" type="PinJoint2D" parent="Elbow"]
+node_a = NodePath("../Hub")
+node_b = NodePath("../../Line1")
+
+[node name="Joint2" type="PinJoint2D" parent="Elbow"]
+node_a = NodePath("../Hub")
+node_b = NodePath("../../Line2")
+
+[node name="Hub" type="RigidBody2D" parent="Elbow"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Elbow/Hub"]
+shape = SubResource( 5 )
+
+[node name="RigidBody2D" type="RigidBody2D" parent="."]
+position = Vector2( 151.366, 438.486 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="RigidBody2D"]
+build_mode = 1
+polygon = PoolVector2Array( 10, 15, 0, 15, 0, 0 )
