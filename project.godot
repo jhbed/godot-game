@@ -19,6 +19,10 @@ config/name="First Game"
 run/main_scene="res://scenes/Main.tscn"
 config/icon="res://textures/icon.png"
 
+[autoload]
+
+globals="*res://scripts/globals.gd"
+
 [layer_names]
 
 2d_physics/layer_1="world"

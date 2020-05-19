@@ -14,7 +14,8 @@ var lineIsActive = false
 var lineStart = Vector2()
 var activeLineEnd = Vector2()
 var gravityOn = true
-var sceneObjects = Array()
+var rods = Array()
+var elbows = Array()
 var hoveredRodInstance = null
 var activeSegment=null
 
@@ -27,9 +28,9 @@ func _input(event):
 			#lineStart = event.position
 			hoveredRodInstance=null
 			activeSegment=null
-			for otherRod in sceneObjects:
+			for otherRod in rods:
 				activeSegment = otherRod.isActive
-				if activeSegment != null:
+				if activeSegment != otherRod.ROD_NONE:
 					lineStart = otherRod.get_active_seg_coord()
 					hoveredRodInstance = otherRod
 					break
@@ -42,9 +43,9 @@ func _input(event):
 		else:
 			var secondAttachment=null
 			var secondIdx=null
-			for otherRod in sceneObjects:
+			for otherRod in rods:
 				secondIdx = otherRod.isActive
-				if secondIdx != null:
+				if secondIdx != otherRod.ROD_NONE:
 					secondAttachment = otherRod
 					print("attaching to ", otherRod)
 					break
@@ -78,7 +79,7 @@ func _ready():
 
 func set_scene_gravity():
 	gravityOn = not gravityOn
-	for obj in sceneObjects:
+	for obj in rods:
 		obj.set_mode(gravityOn)
 		
 func _process(delta):
@@ -92,6 +93,7 @@ func init_new_elbow(pos, rod, rodIdx):
 	add_child(elbow)
 	rod.add_elbow(elbow, rodIdx)
 	elbow.attach_rod(rod)
+	elbows.append(elbow)
 	return elbow
 	
 func init_new_rod(rod1, rod1Idx, rod2, rod2Idx):
@@ -114,7 +116,7 @@ func init_new_rod(rod1, rod1Idx, rod2, rod2Idx):
 	var rodInst = ROD.instance()
 	rodInst.init(pos1, pos2, gravityOn)
 	add_child(rodInst)
-	sceneObjects.append(rodInst)
+	rods.append(rodInst)
 	
 	if rod1 != null:
 		elbow1.attach_rod(rodInst)

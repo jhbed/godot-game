@@ -1,10 +1,12 @@
 extends Node2D
 
+enum {ROD_START, ROD_END, ROD_NONE}
 var ROD_COLOR = ColorN("Yellow")
 const ROD_THICKNESS = 5.0
 const JOINT_RADIUS = 4.0
 const NEAR_JOINT_RADIUS = 7.0
 const ROD_ATTACH_MOUSE_HOVER_DIST = 10
+const BASE_WEIGHT = .098
 
 
 # Declare member variables here. Examples:
@@ -15,12 +17,13 @@ var startPosition=0
 var endPosition=0
 var startPosActive=false
 var endPosActive=false
-var isActive=false
+var isActive=ROD_NONE
 var rb
 var lineSegment
+var selectableArea
 var startElbow=null
 var endElbow=null
-var gravity=98
+var isDeletable=false
 
 func _ready():
 	pass
@@ -47,10 +50,10 @@ func get_start_coord():
 func get_end_coord():
 	return rb.to_global(lineSegment.shape.get_b())
 	
-func get_coord(startOrEnd):
-	if startOrEnd == 'start':
+func get_coord(startOrEnd): 
+	if startOrEnd == ROD_START:
 		return get_start_coord()
-	if startOrEnd == 'end':
+	if startOrEnd == ROD_END:
 		return get_end_coord()
 	return null
 
@@ -72,11 +75,11 @@ func check_active(mouse_pos):
 		startPosActive = false
 		
 	if startPosActive:
-		isActive = 'start'
+		isActive = ROD_START
 	elif endPosActive:
-		isActive = 'end'
+		isActive = ROD_END
 	else:
-		isActive = null
+		isActive = ROD_NONE
 	
 	
 func _draw():	
@@ -95,6 +98,9 @@ func _draw():
 func init(startPos, endPos, gravityStatus):
 	rb = get_node("Line")
 	lineSegment = get_node("Line/CollisionShape2D")
+	selectableArea = get_node("Line/SelectableArea/CollisionShape2D")
+	selectableArea.set_shape(RectangleShape2D.new())
+	
 	set_mode(gravityStatus) 
 	lineSegment.set_shape(lineSegment.get_shape().duplicate(true))
 	
@@ -109,6 +115,14 @@ func init(startPos, endPos, gravityStatus):
 	
 	startPosition = startPos
 	endPosition = endPos
+	
+	var length = startPos.distance_to(endPos)
+	rb.set_weight(BASE_WEIGHT * length)
+	selectableArea.shape.set_extents(Vector2(length/2, ROD_THICKNESS))
+	#deletableArea.rotation = Vector2.RIGHT.angle()
+	var rot = startPos.angle_to_point(endPos)
+	selectableArea.rotate(rot)
+	
 
 func set_mode(gravityStatus):
 	if gravityStatus:
@@ -122,15 +136,15 @@ func calcCenterPoint(pos1, pos2):
 	return Vector2((pos1.x + pos2.x)/2, (pos1.y + pos2.y)/2)
 	
 func add_elbow(elbow, idx):
-	if idx == 'start':
+	if idx == ROD_START:
 		startElbow = elbow
-	if idx == 'end':
+	if idx == ROD_END:
 		endElbow = elbow
 		
 func get_elbow(idx):
-	if idx == 'start':
+	if idx == ROD_START:
 		return startElbow
-	if idx == 'end':
+	if idx == ROD_END:
 		return endElbow
 	return null
 	

@@ -11,8 +11,8 @@ func _ready():
 	pass # Replace with function body.
 	
 func _process(delta):
+	var hub = get_node("Hub")
 	for joint in joints:
-		var hub = get_node("Hub")
 		joint.position = hub.position
 
 
