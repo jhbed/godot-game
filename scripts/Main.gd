@@ -1,5 +1,7 @@
 extends Node2D
 
+signal gravity_change(gravityStatus)
+
 var LINE_COLOR = ColorN("Yellow")
 const LINE_WIDTH = 3.0
 const JOINT_RADIUS = 4.0
@@ -7,55 +9,50 @@ const NEAR_JOINT_RADIUS = 7.0
 
 var ROD = preload("res://scenes/Rod.tscn")
 var ELBOW = preload("res://scenes/Elbow.tscn")
+var TOOLBAR = preload("res://scenes/Toolbar.tscn")
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 var lineIsActive = false
-var lineStart = Vector2()
+var lineStart = Vector2(0,0)
 var activeLineEnd = Vector2()
 var gravityOn = true
-var rods = Array()
-var elbows = Array()
 var hoveredRodInstance = null
+var activeRodInstance = null
 var activeSegment=null
+var canDrawLines = true
+var lineToolOn = true
+var moveToolOn = false
+var eraseToolOn = false
+
+var elbowCount = 0
+var rodCount = 0
 
 func _input(event):
 	
-	if event is InputEventMouseButton and event.is_pressed():
+	if event is InputEventMouseButton and event.is_pressed() and canDrawLines and lineToolOn:
 		lineIsActive = not lineIsActive
 		
 		if lineIsActive:
-			#lineStart = event.position
-			hoveredRodInstance=null
-			activeSegment=null
-			for otherRod in rods:
-				activeSegment = otherRod.isActive
-				if activeSegment != otherRod.ROD_NONE:
-					lineStart = otherRod.get_active_seg_coord()
-					hoveredRodInstance = otherRod
-					break
-					
-			if not hoveredRodInstance:
-				lineStart = get_global_mouse_position()
+			if hoveredRodInstance:
+				activeRodInstance = hoveredRodInstance
+				lineStart = activeRodInstance.get_active_seg_coord()
+				activeSegment = activeRodInstance.isActive
 			else:
-				print("attaching to ", hoveredRodInstance)
-				
+				lineStart = get_global_mouse_position()
 		else:
 			var secondAttachment=null
 			var secondIdx=null
-			for otherRod in rods:
-				secondIdx = otherRod.isActive
-				if secondIdx != otherRod.ROD_NONE:
-					secondAttachment = otherRod
-					print("attaching to ", otherRod)
-					break
-			init_new_rod(hoveredRodInstance, 
+			if hoveredRodInstance:
+				secondIdx = hoveredRodInstance.isActive
+				#if secondIdx != hoveredRodInstance.ROD_NONE:
+				secondAttachment = hoveredRodInstance
+			init_new_rod(activeRodInstance, 
 						 activeSegment, 
 						 secondAttachment, 
 						secondIdx)
-			
-			
-			
+			activeRodInstance=null
+				
 	elif event is InputEventMouseMotion and lineIsActive:
 		activeLineEnd = get_global_mouse_position()
 		
@@ -75,16 +72,15 @@ func _ready():
 	#Physics2DServer.area_set_param(get_world_2d().space, 
 				#Physics2DServer.AREA_PARAM_GRAVITY_VECTOR, 
 				#Vector2.ZERO)
-
-
 func set_scene_gravity():
 	gravityOn = not gravityOn
-	for obj in rods:
-		obj.set_mode(gravityOn)
+	emit_signal("gravity_change", gravityOn)
+#	for obj in rods:
+#		obj.set_mode(gravityOn)
 		
-func _process(delta):
-	if hoveredRodInstance:
-		lineStart = hoveredRodInstance.get_coord(activeSegment)
+func _physics_process(delta):
+	if activeRodInstance:
+		lineStart = activeRodInstance.get_coord(activeSegment)
 	update()
 	
 func init_new_elbow(pos, rod, rodIdx):
@@ -93,10 +89,12 @@ func init_new_elbow(pos, rod, rodIdx):
 	add_child(elbow)
 	rod.add_elbow(elbow, rodIdx)
 	elbow.attach_rod(rod)
-	elbows.append(elbow)
+	elbowCount+=1
 	return elbow
 	
 func init_new_rod(rod1, rod1Idx, rod2, rod2Idx):
+	#inits a new rod between lineStart and global_mouse_position()
+	#if connecting to a rod it should make a new elbow or use that rods elbow
 	var elbow1=null
 	var elbow2=null
 	var pos1 = lineStart
@@ -116,11 +114,26 @@ func init_new_rod(rod1, rod1Idx, rod2, rod2Idx):
 	var rodInst = ROD.instance()
 	rodInst.init(pos1, pos2, gravityOn)
 	add_child(rodInst)
-	rods.append(rodInst)
 	
 	if rod1 != null:
 		elbow1.attach_rod(rodInst)
+		rodInst.add_elbow(elbow1, rodInst.ROD_START)
 		
 	if rod2 != null:
 		elbow2.attach_rod(rodInst)
+		rodInst.add_elbow(elbow2, rodInst.ROD_END)
+		
+	rodCount += 1
+	log_state()
 	
+func log_state():
+	print("Elbow count ", elbowCount)
+	print("Rod count ", rodCount)
+
+
+func _on_ToolbarArea_mouse_entered():
+	canDrawLines = false
+
+
+func _on_ToolbarArea_mouse_exited():
+	canDrawLines = true

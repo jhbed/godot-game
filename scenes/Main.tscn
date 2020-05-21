@@ -1,11 +1,22 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://scripts/Main.gd" type="Script" id=1]
+[ext_resource path="res://textures/line_tool.png" type="Texture" id=2]
+[ext_resource path="res://textures/move_tool.png" type="Texture" id=3]
+[ext_resource path="res://textures/erase_tool.png" type="Texture" id=4]
+[ext_resource path="res://textures/active_tool.png" type="Texture" id=5]
+[ext_resource path="res://scenes/Toolbar.gd" type="Script" id=6]
 
 [sub_resource type="PhysicsMaterial" id=1]
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 515, 10 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 35, 35 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 200, 50 )
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -16,3 +27,65 @@ physics_material_override = SubResource( 1 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
 shape = SubResource( 2 )
+
+[node name="Toolbar" type="Node2D" parent="."]
+script = ExtResource( 6 )
+
+[node name="Line" type="Area2D" parent="Toolbar"]
+position = Vector2( 703.616, 54.2548 )
+
+[node name="Sprite" type="Sprite" parent="Toolbar/Line"]
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 2 )
+
+[node name="Active" type="Sprite" parent="Toolbar/Line"]
+scale = Vector2( 0.4, 0.4 )
+texture = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Toolbar/Line"]
+visible = false
+shape = SubResource( 3 )
+
+[node name="Move" type="Area2D" parent="Toolbar"]
+position = Vector2( 818.908, 54.2548 )
+
+[node name="Sprite" type="Sprite" parent="Toolbar/Move"]
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 3 )
+
+[node name="Active" type="Sprite" parent="Toolbar/Move"]
+visible = false
+scale = Vector2( 0.4, 0.4 )
+texture = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Toolbar/Move"]
+visible = false
+shape = SubResource( 3 )
+
+[node name="Erase" type="Area2D" parent="Toolbar"]
+position = Vector2( 935.895, 54.2548 )
+
+[node name="Sprite" type="Sprite" parent="Toolbar/Erase"]
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 4 )
+
+[node name="Active" type="Sprite" parent="Toolbar/Erase"]
+visible = false
+scale = Vector2( 0.4, 0.4 )
+texture = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Toolbar/Erase"]
+visible = false
+shape = SubResource( 3 )
+
+[node name="ToolbarArea" type="Area2D" parent="Toolbar"]
+position = Vector2( 824.534, 56.112 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Toolbar/ToolbarArea"]
+visible = false
+shape = SubResource( 4 )
+[connection signal="input_event" from="Toolbar/Line" to="Toolbar" method="_on_Linetool_input_event"]
+[connection signal="input_event" from="Toolbar/Move" to="Toolbar" method="_on_Movetool_input_event"]
+[connection signal="input_event" from="Toolbar/Erase" to="Toolbar" method="_on_Erasetool_input_event"]
+[connection signal="mouse_entered" from="Toolbar/ToolbarArea" to="." method="_on_ToolbarArea_mouse_entered"]
+[connection signal="mouse_exited" from="Toolbar/ToolbarArea" to="." method="_on_ToolbarArea_mouse_exited"]

@@ -1,5 +1,9 @@
 extends Node2D
 
+#TODO
+#make code that checks if you are near an edge an Area 2D with signal,
+#that is probably more efficient then current system
+
 enum {ROD_START, ROD_END, ROD_NONE}
 var ROD_COLOR = ColorN("Yellow")
 const ROD_THICKNESS = 5.0
@@ -15,6 +19,8 @@ const BASE_WEIGHT = .098
 
 var startPosition=0
 var endPosition=0
+var startArea
+var endArea
 var startPosActive=false
 var endPosActive=false
 var isActive=ROD_NONE
@@ -23,19 +29,18 @@ var lineSegment
 var selectableArea
 var startElbow=null
 var endElbow=null
-var isDeletable=false
 
 func _ready():
-	pass
-	
-func _process(delta):
-	startPosition = get_start_coord()
-	endPosition = get_end_coord()
-	check_active(get_global_mouse_position())
-	update()
+	get_parent().connect("gravity_change", self, "on_gravity_change")
+
+func on_gravity_change(gravityStatus):
+	set_mode(gravityStatus)
 	
 func _physics_process(delta):
-	pass
+	startPosition = get_start_coord()
+	endPosition = get_end_coord()
+	#check_active(get_global_mouse_position())
+	update()
 	
 func get_active_seg_coord():
 	if startPosActive:
@@ -99,7 +104,11 @@ func init(startPos, endPos, gravityStatus):
 	rb = get_node("Line")
 	lineSegment = get_node("Line/CollisionShape2D")
 	selectableArea = get_node("Line/SelectableArea/CollisionShape2D")
+	startArea = get_node("Line/StartCircle")
+	endArea = get_node("Line/EndCircle")
 	selectableArea.set_shape(RectangleShape2D.new())
+	startArea.get_node("CollisionShape2D").set_shape(CircleShape2D.new())
+	endArea.get_node("CollisionShape2D").set_shape(CircleShape2D.new())
 	
 	set_mode(gravityStatus) 
 	lineSegment.set_shape(lineSegment.get_shape().duplicate(true))
@@ -111,14 +120,17 @@ func init(startPos, endPos, gravityStatus):
 	var b = -a
 	rb.position = centerPoint
 	lineSegment.shape.set_a(a)
+	startArea.position = a
 	lineSegment.shape.set_b(b)
+	endArea.position = b
+	
 	
 	startPosition = startPos
 	endPosition = endPos
 	
 	var length = startPos.distance_to(endPos)
 	rb.set_weight(BASE_WEIGHT * length)
-	selectableArea.shape.set_extents(Vector2(length/2, ROD_THICKNESS))
+	selectableArea.shape.set_extents(Vector2(length/2, ROD_THICKNESS+2))
 	#deletableArea.rotation = Vector2.RIGHT.angle()
 	var rot = startPos.angle_to_point(endPos)
 	selectableArea.rotate(rot)
@@ -142,9 +154,9 @@ func add_elbow(elbow, idx):
 		endElbow = elbow
 		
 func get_elbow(idx):
-	if idx == ROD_START:
+	if idx == ROD_START and startElbow != null:
 		return startElbow
-	if idx == ROD_END:
+	if idx == ROD_END and endElbow != null:
 		return endElbow
 	return null
 	
@@ -154,3 +166,58 @@ func get_elbow(idx):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
+
+func delete():
+	for elbow in [startElbow, endElbow]:
+		print(elbow)
+		if elbow:
+			var idx = elbow.attachedRods.find(self)
+			if idx >= 0:
+				elbow.remove_rod(self)
+			if elbow.rodCount <= 1:
+				elbow.delete()
+	get_parent().rodCount -= 1
+	self.queue_free()
+	
+
+func _on_SelectableArea_input_event(viewport, event, shape_idx):
+	if event is InputEventMouseButton:
+		if event.is_pressed():
+			var parent = get_parent()
+			if parent.eraseToolOn:
+				delete()
+			elif parent.moveToolOn:
+				print('dragging')
+				rb.dragging=true
+		else:
+			print('not dragging')
+			rb.dragging=false
+			
+	elif event is InputEventMouseMotion:
+		rb.translate_by = event.get_relative()
+		rb.set_sleeping(false)
+			
+
+
+func _on_StartCircle_mouse_entered():
+	startPosActive=true
+	endPosActive=false
+	isActive=ROD_START
+	get_parent().hoveredRodInstance = self
+
+func _on_StartCircle_mouse_exited():
+	startPosActive=false
+	isActive=ROD_NONE
+	get_parent().hoveredRodInstance = null
+	
+func _on_EndCircle_mouse_entered():
+	startPosActive=false
+	endPosActive=true
+	isActive=ROD_END
+	get_parent().hoveredRodInstance = self
+
+func _on_EndCircle_mouse_exited():
+	endPosActive=false
+	isActive=ROD_NONE
+	get_parent().hoveredRodInstance = null
+

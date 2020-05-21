@@ -12,12 +12,24 @@ script = ExtResource( 1 )
 script = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Line"]
-visible = false
 shape = SubResource( 1 )
 
 [node name="SelectableArea" type="Area2D" parent="Line"]
-visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Line/SelectableArea"]
-[connection signal="mouse_entered" from="Line" to="Line" method="_on_Line_mouse_entered"]
-[connection signal="mouse_entered" from="Line/SelectableArea" to="Line" method="_on_Area2D_mouse_entered"]
+visible = false
+
+[node name="StartCircle" type="Area2D" parent="Line"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Line/StartCircle"]
+visible = false
+
+[node name="EndCircle" type="Area2D" parent="Line"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Line/EndCircle"]
+visible = false
+[connection signal="input_event" from="Line/SelectableArea" to="." method="_on_SelectableArea_input_event"]
+[connection signal="mouse_entered" from="Line/StartCircle" to="." method="_on_StartCircle_mouse_entered"]
+[connection signal="mouse_exited" from="Line/StartCircle" to="." method="_on_StartCircle_mouse_exited"]
+[connection signal="mouse_entered" from="Line/EndCircle" to="." method="_on_EndCircle_mouse_entered"]
+[connection signal="mouse_exited" from="Line/EndCircle" to="." method="_on_EndCircle_mouse_exited"]
