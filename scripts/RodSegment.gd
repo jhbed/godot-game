@@ -32,7 +32,7 @@ var endElbow=null
 var hovering=false
 
 func _ready():
-	get_parent().connect("gravity_change", self, "on_gravity_change")
+	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "on_gravity_change")
 
 func on_gravity_change(gravityStatus):
 	set_mode(gravityStatus)
@@ -184,12 +184,9 @@ func _on_EndCircle_mouse_exited():
 	isActive=ROD_NONE
 	get_parent().hoveredRodInstance = null
 
-
-
 func _on_SelectableArea_mouse_entered():
-	if get_parent().moveToolOn:
+	if get_parent().get_parent().moveToolOn:
 		hovering=true
-
 
 func _on_SelectableArea_mouse_exited():
 	hovering=false

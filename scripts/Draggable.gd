@@ -10,15 +10,14 @@ var clickDelta = Vector2.ZERO
 var rod
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	rod = get_parent()
+
 	#pass # Replace with function body.
 	
 func _input_event(viewport, event, shape_idx):
 	if (event is InputEventMouseButton 
 		and event.button_index == BUTTON_LEFT
 		and event.is_pressed()):
-		globals.emit_signal("clicked", self)
+		globals.emit_signal(globals.INTERACTIVE_OBJECT_CLICKED, self)
 		
 func _physics_process(delta):
 	if held:
@@ -38,6 +37,5 @@ func drop(impulse=Vector2.ZERO):
 		#set_sleeping(false)
 		held = false
 		
-func delete():
-	rod.delete()
+
 
