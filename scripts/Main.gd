@@ -9,7 +9,6 @@ const NEAR_JOINT_RADIUS = 7.0
 
 var ROD = preload("res://scenes/Rod.tscn")
 var ELBOW = preload("res://scenes/Elbow.tscn")
-var TOOLBAR = preload("res://scenes/Toolbar.tscn")
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -24,6 +23,7 @@ var canDrawLines = true
 var lineToolOn = true
 var moveToolOn = false
 var eraseToolOn = false
+var heldObject=null
 
 var elbowCount = 0
 var rodCount = 0
@@ -114,6 +114,7 @@ func init_new_rod(rod1, rod1Idx, rod2, rod2Idx):
 	var rodInst = ROD.instance()
 	rodInst.init(pos1, pos2, gravityOn)
 	add_child(rodInst)
+	globals.connect("clicked", self, "_on_draggable_clicked")
 	
 	if rod1 != null:
 		elbow1.attach_rod(rodInst)
@@ -137,3 +138,16 @@ func _on_ToolbarArea_mouse_entered():
 
 func _on_ToolbarArea_mouse_exited():
 	canDrawLines = true
+	
+func _on_draggable_clicked(object):
+	if eraseToolOn:
+		object.delete()
+	elif !heldObject and moveToolOn:
+		heldObject = object
+		heldObject.pickup()
+		
+func _unhandled_input(event):
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
+		if heldObject and !event.pressed:
+			heldObject.drop(Input.get_last_mouse_speed())
+			heldObject = null

@@ -29,6 +29,7 @@ var lineSegment
 var selectableArea
 var startElbow=null
 var endElbow=null
+var hovering=false
 
 func _ready():
 	get_parent().connect("gravity_change", self, "on_gravity_change")
@@ -63,29 +64,6 @@ func get_coord(startOrEnd):
 	return null
 
 	
-func check_active(mouse_pos):
-	
-	if (mouse_pos.distance_to(startPosition) < 
-		ROD_ATTACH_MOUSE_HOVER_DIST):
-		startPosActive = true
-		endPosActive= false
-
-	elif (mouse_pos.distance_to(endPosition) < 
-		ROD_ATTACH_MOUSE_HOVER_DIST):
-		endPosActive=true
-		startPosActive=false
-		
-	else:
-		endPosActive=false
-		startPosActive = false
-		
-	if startPosActive:
-		isActive = ROD_START
-	elif endPosActive:
-		isActive = ROD_END
-	else:
-		isActive = ROD_NONE
-	
 	
 func _draw():	
 	if startPosActive:
@@ -97,7 +75,12 @@ func _draw():
 		draw_circle(endPosition, NEAR_JOINT_RADIUS, ROD_COLOR)
 	else:
 		draw_circle(endPosition, JOINT_RADIUS, ROD_COLOR)
-	draw_line(startPosition, endPosition, ROD_COLOR, ROD_THICKNESS)
+		
+	if hovering:
+		draw_line(startPosition, endPosition, ROD_COLOR, ROD_THICKNESS+2)
+	else:
+		draw_line(startPosition, endPosition, ROD_COLOR, ROD_THICKNESS)
+		
 	
 
 func init(startPos, endPos, gravityStatus):
@@ -130,7 +113,7 @@ func init(startPos, endPos, gravityStatus):
 	
 	var length = startPos.distance_to(endPos)
 	rb.set_weight(BASE_WEIGHT * length)
-	selectableArea.shape.set_extents(Vector2(length/2, ROD_THICKNESS+2))
+	selectableArea.shape.set_extents(Vector2(length/2, ROD_THICKNESS*2))
 	#deletableArea.rotation = Vector2.RIGHT.angle()
 	var rot = startPos.angle_to_point(endPos)
 	selectableArea.rotate(rot)
@@ -178,26 +161,6 @@ func delete():
 				elbow.delete()
 	get_parent().rodCount -= 1
 	self.queue_free()
-	
-
-func _on_SelectableArea_input_event(viewport, event, shape_idx):
-	if event is InputEventMouseButton:
-		if event.is_pressed():
-			var parent = get_parent()
-			if parent.eraseToolOn:
-				delete()
-			elif parent.moveToolOn:
-				print('dragging')
-				rb.dragging=true
-		else:
-			print('not dragging')
-			rb.dragging=false
-			
-	elif event is InputEventMouseMotion:
-		rb.translate_by = event.get_relative()
-		rb.set_sleeping(false)
-			
-
 
 func _on_StartCircle_mouse_entered():
 	startPosActive=true
@@ -221,3 +184,12 @@ func _on_EndCircle_mouse_exited():
 	isActive=ROD_NONE
 	get_parent().hoveredRodInstance = null
 
+
+
+func _on_SelectableArea_mouse_entered():
+	if get_parent().moveToolOn:
+		hovering=true
+
+
+func _on_SelectableArea_mouse_exited():
+	hovering=false

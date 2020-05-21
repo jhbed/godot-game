@@ -1,6 +1,6 @@
 extends Node2D
 
-
+const HUB_SIZE=5
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -11,7 +11,9 @@ var attachedRods = Array()
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var shape = get_node("Hub/CollisionShape2D")
-	shape.set_shape(RectangleShape2D.new())
+	var rect = RectangleShape2D.new()
+	rect.set_extents(Vector2(HUB_SIZE, HUB_SIZE))
+	shape.set_shape(rect)
 	get_parent().connect("gravity_change", self, "on_gravity_change")
 	
 	
@@ -29,7 +31,7 @@ func attach_rod(rod):
 	attachedRods.append(rod)
 	var hub = get_node("Hub")
 	var joint = PinJoint2D.new()
-	joint.set_softness(1)
+	joint.set_softness(0.3)
 	joint.position = hub.position
 	add_child(joint)
 	joint.set_node_a(hub.get_path())
