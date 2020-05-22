@@ -5,10 +5,10 @@ const HUB_SIZE=3
 # var a = 2
 # var b = "text"
 var joints = Array()
+var wheelJoint = null
 var rodCount = 0
-var wheelCount = 0
 var attachedRods = Array()
-var attachedWheels = Array()
+var attachedWheel = null
 var hub
 
 # Called when the node enters the scene tree for the first time.
@@ -18,7 +18,7 @@ func _ready():
 	hub = get_node("Hub")
 	rect.set_extents(Vector2(HUB_SIZE, HUB_SIZE))
 	shape.set_shape(rect)
-	get_parent().connect("gravity_change", self, "on_gravity_change")
+	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "on_gravity_change")
 	
 	
 func _process(delta):
@@ -31,6 +31,15 @@ func _process(delta):
 #	pass
 
 func attach_rod(rod):
+	
+	for otherRod in attachedRods:
+		rod.rb.add_collision_exception_with(otherRod.rb)
+		
+	if attachedWheel:
+		rod.rb.add_collision_exception_with(attachedWheel.rb)
+		
+	rod.rb.add_collision_exception_with(hub)
+	
 	attachedRods.append(rod)
 	var joint = PinJoint2D.new()
 	joint.set_softness(0.3)
@@ -41,22 +50,41 @@ func attach_rod(rod):
 	joint.set_node_b(rod.get_node("Line").get_path())
 	joints.append(joint)
 	rodCount += 1
+	print("attached rod")
+	
+func remove_wheel():
+	if wheelJoint:
+		wheelJoint.queue_free()
+	wheelJoint = null
+	attachedWheel = null
 	
 func attach_wheel(wheel):
-	attachedWheels.append(wheel)
 	
-	var joint = PinJoint2D.new()
-	joint.set_softness(0.3)
-	joint.set_visible(false)
-	joint.position = hub.position
-	add_child(joint)
-	joint.set_node_a(hub.get_path())
-	joint.set_node_b(wheel.get_node("WheelBody").get_path())
-	joints.append(joint)
-	wheelCount += 1
+	for otherRod in attachedRods:
+		print("active wheel ", wheel)
+		print("other rod ", otherRod.rb)
+		wheel.rb.add_collision_exception_with(otherRod.rb)
+		
+	wheel.rb.add_collision_exception_with(hub)
+	
+	attachedWheel = wheel
+	
+	wheelJoint = PinJoint2D.new()
+	wheelJoint.set_softness(0.3)
+	wheelJoint.set_visible(false)
+	wheelJoint.position = hub.position
+	add_child(wheelJoint)
+	wheelJoint.set_node_a(hub.get_path())
+	wheelJoint.set_node_b(wheel.get_node("WheelBody").get_path())
+	wheel.elbow = self
+	wheel.activate_torque()
 	
 	
 func delete():
+	
+	if attachedWheel:
+		attachedWheel.elbow = null
+	
 	for rod in attachedRods:
 		if rod.startElbow == self:
 			rod.startElbow = null

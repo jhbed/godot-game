@@ -15,6 +15,7 @@ collision_mask = 3
 script = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Line"]
+visible = false
 shape = SubResource( 1 )
 
 [node name="SelectableArea" type="Area2D" parent="Line"]

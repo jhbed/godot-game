@@ -18,3 +18,7 @@ func _ready():
 
 func delete():
 	wheel.delete()
+
+
+func _on_WheelBody_input_event(viewport, event, shape_idx):
+	._input_event(viewport, event, shape_idx)

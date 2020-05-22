@@ -1,20 +1,30 @@
 extends Node2D
 
+const ACTIVE_TORQUE=4000
 
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 var circleCollider
 var rb
+var current_torque=0
+var elbow=null
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	rb = get_node("WheelBody")
+	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "set_mode")
 
+func activate_torque():
+	current_torque=ACTIVE_TORQUE
+	rb.set_applied_torque(current_torque)
+func deactivate_torque():
+	current_torque=0
+	rb.set_applied_torque(current_torque)
 
 func set_mode(gravityStatus):
 	if gravityStatus:
 		rb.set_mode(RigidBody2D.MODE_RIGID)
-		rb.set_applied_torque(2000)
+		rb.set_applied_torque(current_torque)
 	else:
 		rb.set_mode(RigidBody2D.MODE_STATIC)
 		rb.set_applied_torque(0)
@@ -30,6 +40,17 @@ func init(pos, gravityOn):
 	rb.position = pos
 	
 func delete():
-	queue_free()
+	if elbow:
+		if elbow.rodCount <= 1:
+			elbow.delete()		
+		else:
+			elbow.remove_wheel()
+
+	self.queue_free()
 	
-	
+func _on_WheelBody_mouse_entered():
+	get_parent().hoveredWheelInstance=self
+
+
+func _on_WheelBody_mouse_exited():
+	get_parent().hoveredWheelInstance=null

@@ -43,6 +43,10 @@ func _ready():
 				#Vector2.ZERO)
 func set_scene_gravity():
 	gravityOn = not gravityOn
+	if gravityOn:
+		print("Gravity ON")
+	else:
+		print("Gravity OFF")
 	globals.emit_signal(globals.GRAVITY_CHANGE_SIGNAL, gravityOn)
 #	for obj in rods:
 #		obj.set_mode(gravityOn)
@@ -55,6 +59,8 @@ func _on_draggable_clicked(object):
 	elif !heldObject and moveToolOn:
 		heldObject = object
 		heldObject.pickup()
+	elif heldObject and moveToolOn:
+		heldObject.drop()
 	
 func log_state():
 	print("Elbow count ", multiTool.elbowCount)

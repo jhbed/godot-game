@@ -152,12 +152,11 @@ func get_elbow(idx):
 
 func delete():
 	for elbow in [startElbow, endElbow]:
-		print(elbow)
 		if elbow:
 			var idx = elbow.attachedRods.find(self)
 			if idx >= 0:
 				elbow.remove_rod(self)
-			if elbow.rodCount <= 1:
+			if elbow.rodCount <= 1 and elbow.attachedWheel == null:
 				elbow.delete()
 	get_parent().rodCount -= 1
 	self.queue_free()

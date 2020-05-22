@@ -15,7 +15,9 @@ var lineIsActive = false
 var lineStart = Vector2(0,0)
 var activeLineEnd = Vector2()
 var hoveredRodInstance = null
+var hoveredWheelInstance = null
 var activeRodInstance = null
+var activeWheelInstance = null
 var activeSegment=null
 var canDrawLines = true
 
@@ -36,6 +38,8 @@ func _ready():
 func _physics_process(delta):
 	if activeRodInstance:
 		lineStart = activeRodInstance.get_coord(activeSegment)
+	elif activeWheelInstance:
+		lineStart = activeWheelInstance.rb.global_transform.get_origin()
 	update()
 	
 func init_new_elbow(pos, rod, rodIdx):
@@ -59,12 +63,16 @@ func init_new_rod(rod1, rod1Idx, rod2, rod2Idx):
 		elbow1 = rod1.get_elbow(rod1Idx)
 		if elbow1 == null:
 			elbow1 = init_new_elbow(pos1, rod1, rod1Idx)
+	elif activeWheelInstance:
+		pos1 = activeWheelInstance.rb.global_transform.get_origin()
 			
 	if rod2 != null:
 		pos2 = rod2.get_coord(rod2Idx)
 		elbow2 = rod2.get_elbow(rod2Idx)
 		if elbow2 == null:
 			elbow2 = init_new_elbow(pos2, rod2, rod2Idx)
+	elif hoveredWheelInstance:
+		pos2 = hoveredWheelInstance.rb.global_transform.get_origin()
 	
 	var rodInst = ROD.instance()
 	rodInst.init(pos1, pos2, get_parent().gravityOn)
@@ -73,44 +81,23 @@ func init_new_rod(rod1, rod1Idx, rod2, rod2Idx):
 	if rod1 != null:
 		elbow1.attach_rod(rodInst)
 		rodInst.add_elbow(elbow1, rodInst.ROD_START)
+	elif activeWheelInstance:
+		elbow1 = init_new_elbow(pos1, rodInst, rodInst.ROD_START)
+		elbow1.attach_wheel(activeWheelInstance)
+		rodInst.add_elbow(elbow1, rodInst.ROD_START)
 		
 	if rod2 != null:
 		elbow2.attach_rod(rodInst)
 		rodInst.add_elbow(elbow2, rodInst.ROD_END)
+	elif hoveredWheelInstance:
+		elbow2 = init_new_elbow(pos2, rodInst, rodInst.ROD_END)
+		elbow2.attach_wheel(hoveredWheelInstance)
+		rodInst.add_elbow(elbow2, rodInst.ROD_END)
+		
 		
 	rodCount += 1
 	get_parent().log_state()
-			
-
-func start_drawing_line():
-	if not canDrawLines:
-		return
-	lineIsActive = not lineIsActive
-	if lineIsActive:
-		if hoveredRodInstance:
-			activeRodInstance = hoveredRodInstance
-			lineStart = activeRodInstance.get_active_seg_coord()
-			activeSegment = activeRodInstance.isActive
-		else:
-			lineStart = get_global_mouse_position()
-	else:
-		var secondAttachment=null
-		var secondIdx=null
-		if hoveredRodInstance:
-			secondIdx = hoveredRodInstance.isActive
-			#if secondIdx != hoveredRodInstance.ROD_NONE:
-			secondAttachment = hoveredRodInstance
-		init_new_rod(activeRodInstance, 
-					 activeSegment, 
-					 secondAttachment, 
-					secondIdx)
-		activeRodInstance=null
-		
-func update_active_draw():
-	if lineIsActive:
-		activeLineEnd = get_global_mouse_position()
-		
-
+	
 func init_new_wheel():
 	#inits a new wheel. It is possible a rod exists here so 
 	#put it on the rod if that is the case
@@ -131,14 +118,45 @@ func init_new_wheel():
 			
 	var wheelInst = WHEEL.instance()
 	wheelInst.init(pos, get_parent().gravityOn)
-	if rod:
-		wheelInst.rb.add_collision_exception_with(rod.rb)
-		wheelInst.rb.add_collision_exception_with(elbow.hub)
-		for otherRod in elbow.attachedRods:
-			wheelInst.rb.add_collision_exception_with(otherRod.rb)
-		
 	add_child(wheelInst)
-	if elbow:
+	if rod:
 		elbow.attach_wheel(wheelInst)
+		wheelInst.activate_torque()
 	
+			
+
+func start_drawing_line():
+	if not canDrawLines:
+		return
+	lineIsActive = not lineIsActive
+	if lineIsActive:
+		if hoveredRodInstance:
+			activeRodInstance = hoveredRodInstance
+			lineStart = activeRodInstance.get_active_seg_coord()
+			activeSegment = activeRodInstance.isActive
+		elif hoveredWheelInstance:
+			activeWheelInstance = hoveredWheelInstance
+			lineStart = activeWheelInstance.rb.global_transform.get_origin()
+		else:
+			lineStart = get_global_mouse_position()
+	else:
+		var secondAttachment=null
+		var secondIdx=null
+		if hoveredRodInstance:
+			secondIdx = hoveredRodInstance.isActive
+			#if secondIdx != hoveredRodInstance.ROD_NONE:
+			secondAttachment = hoveredRodInstance
+		init_new_rod(activeRodInstance, 
+					 activeSegment, 
+					 secondAttachment, 
+					secondIdx)
+		activeRodInstance=null
+		activeWheelInstance=null
+		
+func update_active_draw():
+	if lineIsActive:
+		activeLineEnd = get_global_mouse_position()
+		
+
+
 	
