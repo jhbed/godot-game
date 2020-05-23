@@ -8,10 +8,14 @@ extends RigidBody2D
 var held=false
 var clickDelta = Vector2.ZERO
 var rod
+var priorMode = RigidBody2D.MODE_RIGID
 
-# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass
+	
+func test_func():
+	print("CAmera entered!")
 
-	#pass # Replace with function body.
 	
 func _input_event(viewport, event, shape_idx):
 	if (event is InputEventMouseButton 
@@ -27,12 +31,13 @@ func pickup():
 	if held:
 		return
 	clickDelta = get_global_mouse_position() - global_transform.get_origin()
+	priorMode = get_mode()
 	mode = RigidBody2D.MODE_STATIC
 	held = true
 
 func drop(impulse=Vector2.ZERO):
 	if held:
-		mode = RigidBody2D.MODE_RIGID
+		mode = priorMode
 		apply_central_impulse(impulse)
 		#set_sleeping(false)
 		held = false

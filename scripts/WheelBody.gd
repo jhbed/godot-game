@@ -8,6 +8,7 @@ var wheel
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	._ready()
 	wheel = get_parent()
 	pass # Replace with function body.
 
@@ -19,6 +20,3 @@ func _ready():
 func delete():
 	wheel.delete()
 
-
-func _on_WheelBody_input_event(viewport, event, shape_idx):
-	._input_event(viewport, event, shape_idx)

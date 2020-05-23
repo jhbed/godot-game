@@ -53,6 +53,7 @@ func attach_rod(rod):
 	print("attached rod")
 	
 func remove_wheel():
+	print("removing wheel")
 	if wheelJoint:
 		wheelJoint.queue_free()
 	wheelJoint = null
@@ -81,6 +82,7 @@ func attach_wheel(wheel):
 	
 	
 func delete():
+	print("deleting elbow")
 	
 	if attachedWheel:
 		attachedWheel.elbow = null
@@ -92,11 +94,12 @@ func delete():
 		if rod.endElbow == self:
 			rod.endElbow = null
 			
-	for joint in joints:
-		joint.queue_free()
-	hub.queue_free()
+#	for joint in joints:
+#		joint.queue_free()
+#	hub.queue_free()
 	get_parent().elbowCount -= 1
 	self.queue_free()
+	print("finished deleting elbow")
 
 	
 func on_gravity_change(gravityStatus):

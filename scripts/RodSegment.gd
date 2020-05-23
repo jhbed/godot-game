@@ -30,6 +30,7 @@ var selectableArea
 var startElbow=null
 var endElbow=null
 var hovering=false
+var deleted=false
 
 func _ready():
 	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "on_gravity_change")
@@ -151,6 +152,8 @@ func get_elbow(idx):
 #	pass
 
 func delete():
+	deleted=true
+	print("delete rod called")
 	for elbow in [startElbow, endElbow]:
 		if elbow:
 			var idx = elbow.attachedRods.find(self)
@@ -159,6 +162,10 @@ func delete():
 			if elbow.rodCount <= 1 and elbow.attachedWheel == null:
 				elbow.delete()
 	get_parent().rodCount -= 1
+	if self == get_parent().activeRodInstance:
+		get_parent().activeRodInstance=null
+	if self == get_parent().hoveredRodInstance:
+		get_parent().hoveredRodInstance=null
 	self.queue_free()
 
 func _on_StartCircle_mouse_entered():
@@ -189,3 +196,8 @@ func _on_SelectableArea_mouse_entered():
 
 func _on_SelectableArea_mouse_exited():
 	hovering=false
+
+
+func _on_VisibilityNotifier2D_screen_exited():
+	if not deleted:
+		delete()

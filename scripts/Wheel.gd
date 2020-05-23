@@ -9,6 +9,7 @@ var circleCollider
 var rb
 var current_torque=0
 var elbow=null
+var deleted=false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	rb = get_node("WheelBody")
@@ -40,6 +41,9 @@ func init(pos, gravityOn):
 	rb.position = pos
 	
 func delete():
+	deleted=true
+	print("deleting wheel")
+	#rb.queue_free()
 	if elbow:
 		if elbow.rodCount <= 1:
 			elbow.delete()		
@@ -47,6 +51,11 @@ func delete():
 			elbow.remove_wheel()
 
 	self.queue_free()
+	if self == get_parent().activeWheelInstance:
+		get_parent().activeWheelInstance=null
+	if self == get_parent().hoveredWheelInstance:
+		get_parent().hoveredWheelInstance=null
+	print("finished deleting wheel")
 	
 func _on_WheelBody_mouse_entered():
 	get_parent().hoveredWheelInstance=self
@@ -54,3 +63,8 @@ func _on_WheelBody_mouse_entered():
 
 func _on_WheelBody_mouse_exited():
 	get_parent().hoveredWheelInstance=null
+
+
+func _on_VisibilityNotifier2D_screen_exited():
+	if not deleted:
+		delete()

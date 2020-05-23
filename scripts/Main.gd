@@ -53,8 +53,8 @@ func set_scene_gravity():
 
 #observer callback
 func _on_draggable_clicked(object):
+	print("draggable clicked ", object.name)
 	if eraseToolOn:
-		#draggable objects must implement delete()
 		object.delete()
 	elif !heldObject and moveToolOn:
 		heldObject = object
