@@ -23,22 +23,8 @@ shape = SubResource( 1 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Line/SelectableArea"]
 visible = false
 
-[node name="StartCircle" type="Area2D" parent="Line"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Line/StartCircle"]
-visible = false
-
-[node name="EndCircle" type="Area2D" parent="Line"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Line/EndCircle"]
-visible = false
-
 [node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="Line"]
 [connection signal="input_event" from="Line/SelectableArea" to="Line" method="_on_SelectableArea_input_event"]
 [connection signal="mouse_entered" from="Line/SelectableArea" to="." method="_on_SelectableArea_mouse_entered"]
 [connection signal="mouse_exited" from="Line/SelectableArea" to="." method="_on_SelectableArea_mouse_exited"]
-[connection signal="mouse_entered" from="Line/StartCircle" to="." method="_on_StartCircle_mouse_entered"]
-[connection signal="mouse_exited" from="Line/StartCircle" to="." method="_on_StartCircle_mouse_exited"]
-[connection signal="mouse_entered" from="Line/EndCircle" to="." method="_on_EndCircle_mouse_entered"]
-[connection signal="mouse_exited" from="Line/EndCircle" to="." method="_on_EndCircle_mouse_exited"]
 [connection signal="screen_exited" from="Line/VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]

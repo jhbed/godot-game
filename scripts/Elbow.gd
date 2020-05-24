@@ -10,6 +10,7 @@ var rodCount = 0
 var attachedRods = Array()
 var attachedWheel = null
 var hub
+var active=false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -20,10 +21,20 @@ func _ready():
 	shape.set_shape(rect)
 	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "on_gravity_change")
 	
+func _draw():
+	if active:
+		draw_circle(hub.position, globals.NEAR_JOINT_RADIUS, globals.ROD_COLOR)
+	else:
+		draw_circle(hub.position, globals.JOINT_RADIUS, globals.ROD_COLOR)
 	
+	
+func get_pos():
+	return hub.global_transform.get_origin()
+
 func _process(delta):
 	for joint in joints:
 		joint.position = hub.position
+	update()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -50,7 +61,6 @@ func attach_rod(rod):
 	joint.set_node_b(rod.get_node("Line").get_path())
 	joints.append(joint)
 	rodCount += 1
-	print("attached rod")
 	
 func remove_wheel():
 	print("removing wheel")
@@ -62,8 +72,6 @@ func remove_wheel():
 func attach_wheel(wheel):
 	
 	for otherRod in attachedRods:
-		print("active wheel ", wheel)
-		print("other rod ", otherRod.rb)
 		wheel.rb.add_collision_exception_with(otherRod.rb)
 		
 	wheel.rb.add_collision_exception_with(hub)
@@ -81,8 +89,8 @@ func attach_wheel(wheel):
 	wheel.activate_torque()
 	
 	
+	
 func delete():
-	print("deleting elbow")
 	
 	if attachedWheel:
 		attachedWheel.elbow = null
@@ -99,7 +107,8 @@ func delete():
 #	hub.queue_free()
 	get_parent().elbowCount -= 1
 	self.queue_free()
-	print("finished deleting elbow")
+	if get_parent().hoveredElbow == self:
+		get_parent().hoveredElbow=null
 
 	
 func on_gravity_change(gravityStatus):
@@ -129,3 +138,13 @@ func remove_rod(rod):
 		
 	return 0
 
+
+
+func _on_SelectableArea_mouse_entered():
+	active=true
+	get_parent().hoveredElbow=self
+
+
+func _on_SelectableArea_mouse_exited():
+	active=false
+	get_parent().hoveredElbow=null

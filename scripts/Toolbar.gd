@@ -9,6 +9,7 @@ var lineTool
 var moveTool
 var eraseTool
 var wheelTool
+var bGLineTool
 var main
 signal test
 
@@ -16,6 +17,7 @@ signal test
 func _ready():
 	main = get_parent()
 	lineTool = get_node("Line")
+	bGLineTool = get_node("BgLine")
 	moveTool = get_node("Move")
 	eraseTool = get_node("Erase")
 	wheelTool = get_node("Wheel")
@@ -33,10 +35,12 @@ func _on_Linetool_input_event(viewport, event, shape_idx):
 		moveTool.get_node("Active").set_visible(false)
 		lineTool.get_node("Active").set_visible(true)
 		wheelTool.get_node("Active").set_visible(false)
+		bGLineTool.get_node("Active").set_visible(false)
 		main.lineToolOn=true
 		main.moveToolOn=false
 		main.eraseToolOn=false
 		main.wheelToolOn=false
+		main.multiTool.bg = false
 
 
 func _on_Movetool_input_event(viewport, event, shape_idx):
@@ -45,6 +49,7 @@ func _on_Movetool_input_event(viewport, event, shape_idx):
 		moveTool.get_node("Active").set_visible(true)
 		lineTool.get_node("Active").set_visible(false)
 		wheelTool.get_node("Active").set_visible(false)
+		bGLineTool.get_node("Active").set_visible(false)
 		main.lineToolOn=false
 		main.moveToolOn=true
 		main.eraseToolOn=false
@@ -57,6 +62,7 @@ func _on_Erasetool_input_event(viewport, event, shape_idx):
 		moveTool.get_node("Active").set_visible(false)
 		lineTool.get_node("Active").set_visible(false)
 		wheelTool.get_node("Active").set_visible(false)
+		bGLineTool.get_node("Active").set_visible(false)
 		main.lineToolOn=false
 		main.moveToolOn=false
 		main.eraseToolOn=true
@@ -71,7 +77,22 @@ func _on_Wheeltool_input_event(viewport, event, shape_idx):
 		moveTool.get_node("Active").set_visible(false)
 		lineTool.get_node("Active").set_visible(false)
 		wheelTool.get_node("Active").set_visible(true)
+		bGLineTool.get_node("Active").set_visible(false)
 		main.lineToolOn=false
 		main.moveToolOn=false
 		main.eraseToolOn=false
 		main.wheelToolOn=true
+
+
+func _on_BgLine_input_event(viewport, event, shape_idx):
+	if event is InputEventMouseButton and event.is_pressed():
+		eraseTool.get_node("Active").set_visible(false)
+		moveTool.get_node("Active").set_visible(false)
+		lineTool.get_node("Active").set_visible(false)
+		wheelTool.get_node("Active").set_visible(false)
+		bGLineTool.get_node("Active").set_visible(true)
+		main.lineToolOn=true
+		main.moveToolOn=false
+		main.eraseToolOn=false
+		main.wheelToolOn=false
+		main.multiTool.bg = true

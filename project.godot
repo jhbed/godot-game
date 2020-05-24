@@ -27,6 +27,7 @@ globals="*res://scripts/globals.gd"
 
 2d_physics/layer_1="world"
 2d_physics/layer_2="rods"
+2d_physics/layer_3="bg_rods"
 
 [rendering]
 

@@ -14,6 +14,7 @@ script = ExtResource( 3 )
 input_pickable = true
 collision_layer = 3
 collision_mask = 3
+mass = 0.306122
 applied_torque = 2000.0
 script = ExtResource( 2 )
 

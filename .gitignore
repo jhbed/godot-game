@@ -14,3 +14,6 @@ textures/
 textures/*
 */photoshop/
 photoshop/
+*.dmg
+*.exe
+*.pck

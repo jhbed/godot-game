@@ -1,0 +1,47 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://textures/guy/guy walking big/guy_big5.png" type="Texture" id=1]
+[ext_resource path="res://textures/guy/guy walking big/guy_big8.png" type="Texture" id=2]
+[ext_resource path="res://textures/guy/guy walking big/guy_big7.png" type="Texture" id=3]
+[ext_resource path="res://textures/guy/big guy jumping.png" type="Texture" id=4]
+[ext_resource path="res://scripts/Player.gd" type="Script" id=5]
+[ext_resource path="res://textures/guy/guy walking big/guy_big6.png" type="Texture" id=6]
+[ext_resource path="res://textures/guy/guy walking big/guy_big1.png" type="Texture" id=7]
+[ext_resource path="res://textures/guy/guy walking big/guy_big3.png" type="Texture" id=8]
+[ext_resource path="res://textures/guy/guy walking big/guy_big4.png" type="Texture" id=9]
+[ext_resource path="res://textures/guy/guy walking big/guy_big2.png" type="Texture" id=10]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 11.2683, 24.928 )
+
+[sub_resource type="SpriteFrames" id=2]
+animations = [ {
+"frames": [ ExtResource( 7 ) ],
+"loop": true,
+"name": "idle",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 7 ), ExtResource( 10 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 1 ), ExtResource( 6 ), ExtResource( 3 ), ExtResource( 2 ) ],
+"loop": true,
+"name": "run",
+"speed": 15.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "jump",
+"speed": 5.0
+} ]
+
+[node name="Player" type="KinematicBody2D"]
+script = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource( 1 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+position = Vector2( 1.60403, -0.214172 )
+scale = Vector2( 0.464519, 0.464519 )
+frames = SubResource( 2 )
+animation = "idle"
+playing = true

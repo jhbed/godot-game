@@ -5,12 +5,7 @@ extends Node2D
 #that is probably more efficient then current system
 
 enum {ROD_START, ROD_END, ROD_NONE}
-var ROD_COLOR = ColorN("Yellow")
-const ROD_THICKNESS = 5.0
-const JOINT_RADIUS = 4.0
-const NEAR_JOINT_RADIUS = 7.0
-const ROD_ATTACH_MOUSE_HOVER_DIST = 10
-const BASE_WEIGHT = .098
+
 
 
 # Declare member variables here. Examples:
@@ -19,11 +14,6 @@ const BASE_WEIGHT = .098
 
 var startPosition=0
 var endPosition=0
-var startArea
-var endArea
-var startPosActive=false
-var endPosActive=false
-var isActive=ROD_NONE
 var rb
 var lineSegment
 var selectableArea
@@ -31,6 +21,7 @@ var startElbow=null
 var endElbow=null
 var hovering=false
 var deleted=false
+var bg = false
 
 func _ready():
 	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "on_gravity_change")
@@ -43,13 +34,6 @@ func _physics_process(delta):
 	endPosition = get_end_coord()
 	#check_active(get_global_mouse_position())
 	update()
-	
-func get_active_seg_coord():
-	if startPosActive:
-		return get_start_coord()
-	if endPosActive:
-		return get_end_coord()
-	return null
 	
 func get_start_coord():
 	return rb.to_global(lineSegment.shape.get_a())
@@ -66,33 +50,27 @@ func get_coord(startOrEnd):
 
 	
 	
-func _draw():	
-	if startPosActive:
-		draw_circle(startPosition, NEAR_JOINT_RADIUS, ROD_COLOR)
-	else:
-		draw_circle(startPosition, JOINT_RADIUS, ROD_COLOR)
-	
-	if endPosActive:
-		draw_circle(endPosition, NEAR_JOINT_RADIUS, ROD_COLOR)
-	else:
-		draw_circle(endPosition, JOINT_RADIUS, ROD_COLOR)
-		
+func _draw():
+	var color = globals.ROD_COLOR
+	if bg:
+		color = globals.BG_ROD_COLOR
 	if hovering:
-		draw_line(startPosition, endPosition, ROD_COLOR, ROD_THICKNESS+2)
+		draw_line(startPosition, endPosition, color, globals.ROD_THICKNESS+2)
 	else:
-		draw_line(startPosition, endPosition, ROD_COLOR, ROD_THICKNESS)
+		draw_line(startPosition, endPosition, color, globals.ROD_THICKNESS)
 		
 	
 
-func init(startPos, endPos, gravityStatus):
+func init(startPos, endPos, gravityStatus, is_bg):
 	rb = get_node("Line")
 	lineSegment = get_node("Line/CollisionShape2D")
 	selectableArea = get_node("Line/SelectableArea/CollisionShape2D")
-	startArea = get_node("Line/StartCircle")
-	endArea = get_node("Line/EndCircle")
+
 	selectableArea.set_shape(RectangleShape2D.new())
-	startArea.get_node("CollisionShape2D").set_shape(CircleShape2D.new())
-	endArea.get_node("CollisionShape2D").set_shape(CircleShape2D.new())
+	
+	bg = is_bg
+	if bg:
+		make_this_a_background_rod()
 	
 	set_mode(gravityStatus) 
 	lineSegment.set_shape(lineSegment.get_shape().duplicate(true))
@@ -104,21 +82,27 @@ func init(startPos, endPos, gravityStatus):
 	var b = -a
 	rb.position = centerPoint
 	lineSegment.shape.set_a(a)
-	startArea.position = a
 	lineSegment.shape.set_b(b)
-	endArea.position = b
 	
 	
 	startPosition = startPos
 	endPosition = endPos
 	
 	var length = startPos.distance_to(endPos)
-	rb.set_weight(BASE_WEIGHT * length)
-	selectableArea.shape.set_extents(Vector2(length/2, ROD_THICKNESS*2))
+	rb.set_weight(globals.BASE_WEIGHT * length)
+	selectableArea.shape.set_extents(Vector2(length/2, globals.ROD_THICKNESS*2))
 	#deletableArea.rotation = Vector2.RIGHT.angle()
 	var rot = startPos.angle_to_point(endPos)
 	selectableArea.rotate(rot)
 	
+func make_this_a_background_rod():
+	
+	for layer in globals.PHYS_LAYERS:
+		rb.set_collision_layer_bit(globals.PHYS_LAYERS[layer], false)
+		rb.set_collision_mask_bit(globals.PHYS_LAYERS[layer], false)
+	
+	rb.set_collision_layer_bit(globals.PHYS_LAYERS.BG_RODS, false)
+	rb.set_collision_mask_bit(globals.PHYS_LAYERS.WORLD, false)
 
 func set_mode(gravityStatus):
 	if gravityStatus:
@@ -144,51 +128,18 @@ func get_elbow(idx):
 		return endElbow
 	return null
 	
-	
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
 
 func delete():
 	deleted=true
-	print("delete rod called")
 	for elbow in [startElbow, endElbow]:
 		if elbow:
 			var idx = elbow.attachedRods.find(self)
 			if idx >= 0:
 				elbow.remove_rod(self)
-			if elbow.rodCount <= 1 and elbow.attachedWheel == null:
+			if elbow.rodCount <= 0 and elbow.attachedWheel == null:
 				elbow.delete()
 	get_parent().rodCount -= 1
-	if self == get_parent().activeRodInstance:
-		get_parent().activeRodInstance=null
-	if self == get_parent().hoveredRodInstance:
-		get_parent().hoveredRodInstance=null
 	self.queue_free()
-
-func _on_StartCircle_mouse_entered():
-	startPosActive=true
-	endPosActive=false
-	isActive=ROD_START
-	get_parent().hoveredRodInstance = self
-
-func _on_StartCircle_mouse_exited():
-	startPosActive=false
-	isActive=ROD_NONE
-	get_parent().hoveredRodInstance = null
-	
-func _on_EndCircle_mouse_entered():
-	startPosActive=false
-	endPosActive=true
-	isActive=ROD_END
-	get_parent().hoveredRodInstance = self
-
-func _on_EndCircle_mouse_exited():
-	endPosActive=false
-	isActive=ROD_NONE
-	get_parent().hoveredRodInstance = null
 
 func _on_SelectableArea_mouse_entered():
 	if get_parent().get_parent().moveToolOn:

@@ -45,7 +45,7 @@ func delete():
 	print("deleting wheel")
 	#rb.queue_free()
 	if elbow:
-		if elbow.rodCount <= 1:
+		if elbow.rodCount <= 0:
 			elbow.delete()		
 		else:
 			elbow.remove_wheel()
@@ -58,6 +58,7 @@ func delete():
 	print("finished deleting wheel")
 	
 func _on_WheelBody_mouse_entered():
+	print("hovering wheel")
 	get_parent().hoveredWheelInstance=self
 
 
