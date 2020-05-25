@@ -102,7 +102,7 @@ func make_this_a_background_rod():
 		rb.set_collision_mask_bit(globals.PHYS_LAYERS[layer], false)
 	
 	rb.set_collision_layer_bit(globals.PHYS_LAYERS.BG_RODS, false)
-	rb.set_collision_mask_bit(globals.PHYS_LAYERS.WORLD, false)
+	rb.set_collision_mask_bit(globals.PHYS_LAYERS.WORLD, true)
 
 func set_mode(gravityStatus):
 	if gravityStatus:

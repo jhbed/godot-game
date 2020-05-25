@@ -87,6 +87,8 @@ func traverse_and_set_mode(elbow, visited={}, newMode=RigidBody2D.MODE_STATIC):
 	
 	if elbow.attachedWheel:
 		elbow.attachedWheel.rb.set_mode(newMode)
+		for elb in elbow.attachedWheel.get_outer_elbows():
+			elb.hub.set_mode(newMode)
 	
 	for rod in elbow.attachedRods:
 		rod.rb.set_mode(newMode)
@@ -104,6 +106,8 @@ func traverse_and_move_graph(elbow, visited={}, delta=Vector2.ZERO):
 	
 	if elbow.attachedWheel:
 		elbow.attachedWheel.rb.transform.origin += delta
+		for elb in elbow.attachedWheel.get_outer_elbows():
+			elb.hub.transform.origin += delta
 	
 	for rod in elbow.attachedRods:
 		

@@ -1,6 +1,7 @@
 extends Node2D
 
 const HUB_SIZE=3
+var SOFTNESS = 0.3
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -47,13 +48,18 @@ func attach_rod(rod):
 		rod.rb.add_collision_exception_with(otherRod.rb)
 		
 	if attachedWheel:
-		rod.rb.add_collision_exception_with(attachedWheel.rb)
+		var isSide=false
+		for elb in attachedWheel.get_outer_elbows():
+			if elb == self:
+				isSide=true
+		if not isSide:
+			rod.rb.add_collision_exception_with(attachedWheel.rb)
 		
 	rod.rb.add_collision_exception_with(hub)
 	
 	attachedRods.append(rod)
 	var joint = PinJoint2D.new()
-	joint.set_softness(0.3)
+	joint.set_softness(SOFTNESS)
 	joint.set_visible(false)
 	joint.position = hub.position
 	add_child(joint)
@@ -79,7 +85,7 @@ func attach_wheel(wheel):
 	attachedWheel = wheel
 	
 	wheelJoint = PinJoint2D.new()
-	wheelJoint.set_softness(0.3)
+	wheelJoint.set_softness(SOFTNESS)
 	wheelJoint.set_visible(false)
 	wheelJoint.position = hub.position
 	add_child(wheelJoint)
@@ -142,9 +148,12 @@ func remove_rod(rod):
 
 func _on_SelectableArea_mouse_entered():
 	active=true
+	print("ACTIVE")
 	get_parent().hoveredElbow=self
 
 
 func _on_SelectableArea_mouse_exited():
 	active=false
-	get_parent().hoveredElbow=null
+	if get_parent().hoveredElbow == self:
+		print("NOT ACTIVE")
+		get_parent().hoveredElbow=null

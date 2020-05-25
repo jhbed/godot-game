@@ -1,6 +1,6 @@
 extends Node2D
 
-const ACTIVE_TORQUE=4000
+const ACTIVE_TORQUE=100000
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -10,10 +10,38 @@ var rb
 var current_torque=0
 var elbow=null
 var deleted=false
+
+#elbows placed on the edges
+var elbowNorth
+var elbowEast
+var elbowSouth
+var elbowWest
+
+var ELBOW = preload("res://scenes/Elbow.tscn")
+
 # Called when the node enters the scene tree for the first time.
+
+func get_outer_elbows():
+	return [elbowNorth, elbowEast, elbowSouth, elbowWest]
+
+func setup_side_elbow(x, y):
+	var elbow = ELBOW.instance()
+	elbow.position = Vector2(rb.position.x+x, rb.position.y+y)
+	get_parent().add_child(elbow)
+	elbow.attach_wheel(self)
+	elbow.hub.get_node("CollisionShape2D").disabled=true
+	
+	return elbow
+
 func _ready():
 	rb = get_node("WheelBody")
 	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "set_mode")
+	
+	var radius = circleCollider.shape.get_radius()
+	elbowNorth = setup_side_elbow(0, -radius)
+	elbowEast = setup_side_elbow(radius, 0)
+	elbowSouth = setup_side_elbow(0, radius)
+	elbowWest = setup_side_elbow(-radius, 0)
 
 func activate_torque():
 	current_torque=ACTIVE_TORQUE
@@ -44,11 +72,12 @@ func delete():
 	deleted=true
 	print("deleting wheel")
 	#rb.queue_free()
-	if elbow:
-		if elbow.rodCount <= 0:
-			elbow.delete()		
-		else:
-			elbow.remove_wheel()
+	for elb in [elbow, elbowNorth, elbowEast, elbowSouth, elbowWest]:
+		if elb:
+			if elb.rodCount <= 0:
+				elb.delete()		
+			else:
+				elb.remove_wheel()
 
 	self.queue_free()
 	if self == get_parent().activeWheelInstance:
@@ -63,7 +92,8 @@ func _on_WheelBody_mouse_entered():
 
 
 func _on_WheelBody_mouse_exited():
-	get_parent().hoveredWheelInstance=null
+	if get_parent().hoveredWheelInstance == self:
+		get_parent().hoveredWheelInstance=null
 
 
 func _on_VisibilityNotifier2D_screen_exited():

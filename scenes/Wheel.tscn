@@ -12,10 +12,9 @@ script = ExtResource( 3 )
 
 [node name="WheelBody" type="RigidBody2D" parent="."]
 input_pickable = true
-collision_layer = 3
+collision_layer = 2
 collision_mask = 3
-mass = 0.306122
-applied_torque = 2000.0
+mass = 20.0
 script = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="WheelBody"]
