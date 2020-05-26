@@ -148,12 +148,10 @@ func remove_rod(rod):
 
 func _on_SelectableArea_mouse_entered():
 	active=true
-	print("ACTIVE")
 	get_parent().hoveredElbow=self
 
 
 func _on_SelectableArea_mouse_exited():
 	active=false
 	if get_parent().hoveredElbow == self:
-		print("NOT ACTIVE")
 		get_parent().hoveredElbow=null

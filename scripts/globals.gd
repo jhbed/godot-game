@@ -16,7 +16,7 @@ const ROD_THICKNESS = 5.0
 const JOINT_RADIUS = 4.0
 const NEAR_JOINT_RADIUS = 7.0
 const ROD_ATTACH_MOUSE_HOVER_DIST = 10
-const BASE_WEIGHT = .01
+const BASE_WEIGHT = .04
 
 func _ready():
 	pass

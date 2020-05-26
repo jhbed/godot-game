@@ -5,7 +5,7 @@ extends KinematicBody2D
 # var a = 2
 # var b = "text"
 
-const GRAVITY = 4
+const GRAVITY = 200
 const SPEED = 100
 const JUMP_HEIGHT = -100
 
@@ -24,7 +24,7 @@ func _physics_process(delta):
 	var colliding = is_on_floor()
 	
 	if not colliding:
-		motion.y += GRAVITY
+		motion.y += GRAVITY*delta
 	else:
 		var xvel
 		if Input.is_action_pressed("ui_right"):
@@ -52,7 +52,6 @@ func _physics_process(delta):
 		if get_floor_velocity().y != 0:
 			motion.y = 0
 
-		
 	elif not colliding and not canJump:
 		$AnimatedSprite.play("jump")
 		
@@ -65,35 +64,7 @@ func _physics_process(delta):
 	#print(motion)
 	
 	motion = move_and_slide_with_snap(motion, snap, Vector2.UP, false, 4, PI/4, false)
-	#motion = move_and_slide(motion, Vector2.UP)
-	#motion = move_and_slide(motion, Vector2.UP, false, 4, PI/4, false)
-	
-#func _input(event):
-#	if event is InputEventKey:
-#		if event.is_action_pressed("ui_right"):
-#			moving = true
-#			motion.x = SPEED
-#			$AnimatedSprite.flip_h=false
-#			$AnimatedSprite.play("run")
-#		elif event.is_action_pressed("ui_left"):
-#			moving = true
-#			motion.x = -SPEED
-#			$AnimatedSprite.flip_h=true
-#			$AnimatedSprite.play("run")
-#
-#		if (event.is_action_released("ui_right") or event.is_action_released("ui_left")):
-#			moving = false
-#			$AnimatedSprite.play("idle")
-#			motion.x = 0
-#
-#		if is_on_floor():
-#			if event.scancode == KEY_SPACE:
-#				motion.y = JUMP_HEIGHT
-#		else:
-#			$AnimatedSprite.play("jump")
-			
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+	for index in get_slide_count():
+		var collision = get_slide_collision(index)
+		print(collision.collider.name, is_on_floor())

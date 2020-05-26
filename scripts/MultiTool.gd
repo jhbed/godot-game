@@ -16,6 +16,7 @@ var canDrawLines = true
 var hoveredElbow=null
 var activeElbow=null
 var bg=false
+var backwards_wheel=false
 
 
 var elbowCount = 0
@@ -54,8 +55,12 @@ func init_new_wheel():
 	var wheelInst = WHEEL.instance()
 	wheelInst.init(pos, get_parent().gravityOn)
 	add_child(wheelInst)
+	
+	if backwards_wheel:
+		wheelInst.get_node("WheelBody/Sprite").flip_h=true
+	
 	elbow.attach_wheel(wheelInst)
-	wheelInst.activate_torque()
+	wheelInst.activate_torque(backwards_wheel)
 
 func init_new_elbow(pos):
 	var elbow = ELBOW.instance()

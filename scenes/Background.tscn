@@ -1,0 +1,73 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://textures/parallax_mountain_pack/layers/parallax-mountain-mountains.png" type="Texture" id=1]
+[ext_resource path="res://textures/parallax_mountain_pack/layers/parallax-mountain-trees.png" type="Texture" id=2]
+[ext_resource path="res://textures/parallax_mountain_pack/layers/parallax-mountain-montain-far.png" type="Texture" id=3]
+[ext_resource path="res://textures/bg3.png" type="Texture" id=4]
+[ext_resource path="res://textures/parallax_mountain_pack/layers/parallax-mountain-foreground-trees.png" type="Texture" id=5]
+[ext_resource path="res://scenes/Toolbar.tscn" type="PackedScene" id=6]
+
+[node name="Background" type="Node2D"]
+position = Vector2( 1, 0 )
+
+[node name="Sky" type="ParallaxBackground" parent="."]
+layer = -6
+scroll_base_scale = Vector2( 0, 0 )
+scroll_ignore_camera_zoom = true
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Sky"]
+
+[node name="Sprite" type="Sprite" parent="Sky/ParallaxLayer"]
+scale = Vector2( 0.6, 0.6 )
+texture = ExtResource( 4 )
+centered = false
+
+[node name="Toolbar" parent="Sky/ParallaxLayer" instance=ExtResource( 6 )]
+
+[node name="MountainsFar" type="ParallaxBackground" parent="."]
+layer = -5
+scroll_base_scale = Vector2( 0.4, 0.4 )
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="MountainsFar"]
+motion_mirroring = Vector2( 1088, 0 )
+
+[node name="Sprite" type="Sprite" parent="MountainsFar/ParallaxLayer"]
+scale = Vector2( 4, 4 )
+texture = ExtResource( 3 )
+centered = false
+
+[node name="MountainsClose" type="ParallaxBackground" parent="."]
+layer = -4
+scroll_base_scale = Vector2( 0.5, 0.5 )
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="MountainsClose"]
+motion_mirroring = Vector2( 2176, 0 )
+
+[node name="Sprite" type="Sprite" parent="MountainsClose/ParallaxLayer"]
+scale = Vector2( 4, 4 )
+texture = ExtResource( 1 )
+centered = false
+
+[node name="FarTrees" type="ParallaxBackground" parent="."]
+layer = -3
+scroll_base_scale = Vector2( 0.8, 0.8 )
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="FarTrees"]
+motion_mirroring = Vector2( 2176, 0 )
+
+[node name="Sprite" type="Sprite" parent="FarTrees/ParallaxLayer"]
+scale = Vector2( 4, 4 )
+texture = ExtResource( 2 )
+centered = false
+
+[node name="CloseTrees" type="ParallaxBackground" parent="."]
+layer = -2
+scroll_base_scale = Vector2( 0.9, 0.9 )
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="CloseTrees"]
+motion_mirroring = Vector2( 2176, 0 )
+
+[node name="Sprite" type="Sprite" parent="CloseTrees/ParallaxLayer"]
+scale = Vector2( 4, 4 )
+texture = ExtResource( 5 )
+centered = false

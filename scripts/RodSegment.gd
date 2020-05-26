@@ -147,8 +147,3 @@ func _on_SelectableArea_mouse_entered():
 
 func _on_SelectableArea_mouse_exited():
 	hovering=false
-
-
-func _on_VisibilityNotifier2D_screen_exited():
-	if not deleted:
-		delete()

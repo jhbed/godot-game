@@ -1,6 +1,6 @@
 extends Node2D
 
-const ACTIVE_TORQUE=100000
+const ACTIVE_TORQUE=40000
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -43,8 +43,10 @@ func _ready():
 	elbowSouth = setup_side_elbow(0, radius)
 	elbowWest = setup_side_elbow(-radius, 0)
 
-func activate_torque():
+func activate_torque(backwards=false):
 	current_torque=ACTIVE_TORQUE
+	if backwards:
+		current_torque *= -1
 	rb.set_applied_torque(current_torque)
 func deactivate_torque():
 	current_torque=0
@@ -95,7 +97,3 @@ func _on_WheelBody_mouse_exited():
 	if get_parent().hoveredWheelInstance == self:
 		get_parent().hoveredWheelInstance=null
 
-
-func _on_VisibilityNotifier2D_screen_exited():
-	if not deleted:
-		delete()

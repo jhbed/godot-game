@@ -32,6 +32,8 @@ func _input(event):
 	elif event is InputEventKey and event.is_pressed():
 		if event.scancode == KEY_G:
 			set_scene_gravity()	
+		if event.scancode == KEY_R:
+			multiTool.backwards_wheel = not multiTool.backwards_wheel
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -68,9 +70,4 @@ func log_state():
 
 
 
-func _on_ToolbarArea_mouse_entered():
-	multiTool.canDrawLines = false
 
-
-func _on_ToolbarArea_mouse_exited():
-	multiTool.canDrawLines = true

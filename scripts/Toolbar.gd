@@ -15,7 +15,7 @@ signal test
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	main = get_parent()
+	main = get_tree().get_root().get_node("Main")
 	lineTool = get_node("Line")
 	bGLineTool = get_node("BgLine")
 	moveTool = get_node("Move")
@@ -96,3 +96,11 @@ func _on_BgLine_input_event(viewport, event, shape_idx):
 		main.eraseToolOn=false
 		main.wheelToolOn=false
 		main.multiTool.bg = true
+
+
+func _on_ToolbarArea_mouse_entered():
+	main.multiTool.canDrawLines = false
+
+
+func _on_ToolbarArea_mouse_exited():
+	main.multiTool.canDrawLines = true
