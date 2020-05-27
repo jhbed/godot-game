@@ -1,16 +1,6 @@
 extends Node2D
 
-#TODO
-#make code that checks if you are near an edge an Area 2D with signal,
-#that is probably more efficient then current system
-
 enum {ROD_START, ROD_END, ROD_NONE}
-
-
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
 
 var startPosition=0
 var endPosition=0
@@ -62,9 +52,9 @@ func _draw():
 	
 
 func init(startPos, endPos, gravityStatus, is_bg):
-	rb = get_node("Line")
-	lineSegment = get_node("Line/CollisionShape2D")
-	selectableArea = get_node("Line/SelectableArea/CollisionShape2D")
+	rb = get_node("Body")
+	lineSegment = get_node("Body/CollisionShape2D")
+	selectableArea = get_node("Body/SelectableArea/CollisionShape2D")
 
 	selectableArea.set_shape(RectangleShape2D.new())
 	
@@ -136,14 +126,15 @@ func delete():
 			var idx = elbow.attachedRods.find(self)
 			if idx >= 0:
 				elbow.remove_rod(self)
-			if elbow.rodCount <= 0 and elbow.attachedWheel == null:
+			if elbow.rodCount <= 0 and elbow.attachedObj == null:
 				elbow.delete()
 	get_parent().rodCount -= 1
 	self.queue_free()
 
 func _on_SelectableArea_mouse_entered():
-	if get_parent().get_parent().moveToolOn:
+	if get_parent().get_parent().state == globals.TOOLS.MOVETOOL:
 		hovering=true
 
 func _on_SelectableArea_mouse_exited():
 	hovering=false
+

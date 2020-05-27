@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://textures/game_item_textures/motor_simple_active_texture.png" type="Texture" id=1]
+[ext_resource path="res://textures/game_item_textures/motor_simple_texture.png" type="Texture" id=2]
+[ext_resource path="res://scripts/game_object_scripts/Motor.gd" type="Script" id=3]
+[ext_resource path="res://scripts/game_object_scripts/Draggable.gd" type="Script" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+
+[node name="Motor" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="PhysBody" type="RigidBody2D" parent="."]
+script = ExtResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PhysBody"]
+shape = SubResource( 1 )
+
+[node name="InactiveTexture" type="Sprite" parent="PhysBody"]
+scale = Vector2( 20, 20 )
+texture = ExtResource( 2 )
+
+[node name="ActiveTexture" type="Sprite" parent="PhysBody"]
+visible = false
+scale = Vector2( 20, 20 )
+texture = ExtResource( 1 )
+[connection signal="mouse_entered" from="PhysBody" to="." method="_on_PhysBody_mouse_entered"]
+[connection signal="mouse_exited" from="PhysBody" to="." method="_on_PhysBody_mouse_exited"]

@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://scripts/Main.gd" type="Script" id=1]
-[ext_resource path="res://scenes/Background.tscn" type="PackedScene" id=2]
-[ext_resource path="res://scenes/PlayerRigid.tscn" type="PackedScene" id=8]
-[ext_resource path="res://textures/ground.jpg" type="Texture" id=11]
+[ext_resource path="res://scripts/main/Main.gd" type="Script" id=1]
+[ext_resource path="res://scenes/Main/Background.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/player_scenes/PlayerRigid.tscn" type="PackedScene" id=8]
+[ext_resource path="res://textures/game_item_textures/ground.jpg" type="Texture" id=11]
 
 [sub_resource type="PhysicsMaterial" id=1]
 

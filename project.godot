@@ -16,12 +16,12 @@ _global_script_class_icons={
 [application]
 
 config/name="First Game"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="res://scenes/Main/Main.tscn"
 config/icon="res://textures/icon.png"
 
 [autoload]
 
-globals="*res://scripts/globals.gd"
+globals="*res://scripts/main/globals.gd"
 
 [debug]
 

@@ -10,6 +10,7 @@ var rb
 var current_torque=0
 var elbow=null
 var deleted=false
+var obj_type = globals.TOOLS.WHEELTOOL
 
 #elbows placed on the edges
 var elbowNorth
@@ -17,7 +18,7 @@ var elbowEast
 var elbowSouth
 var elbowWest
 
-var ELBOW = preload("res://scenes/Elbow.tscn")
+var ELBOW = preload("res://scenes/game_objects/Elbow.tscn")
 
 # Called when the node enters the scene tree for the first time.
 
@@ -28,13 +29,13 @@ func setup_side_elbow(x, y):
 	var elbow = ELBOW.instance()
 	elbow.position = Vector2(rb.position.x+x, rb.position.y+y)
 	get_parent().add_child(elbow)
-	elbow.attach_wheel(self)
+	elbow.attach_obj(self)
 	elbow.hub.get_node("CollisionShape2D").disabled=true
 	
 	return elbow
 
 func _ready():
-	rb = get_node("WheelBody")
+	rb = get_node("PhysBody")
 	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "set_mode")
 	
 	var radius = circleCollider.shape.get_radius()
@@ -64,15 +65,14 @@ func set_mode(gravityStatus):
 #func _process(delta):
 #	pass
 func init(pos, gravityOn):
-	rb = get_node("WheelBody")
-	circleCollider = get_node("WheelBody/CollisionShape2D")
+	rb = get_node("PhysBody")
+	circleCollider = get_node("PhysBody/CollisionShape2D")
 	set_mode(gravityOn) 
 	circleCollider.set_shape(circleCollider.get_shape().duplicate(true))
 	rb.position = pos
 	
 func delete():
 	deleted=true
-	print("deleting wheel")
 	#rb.queue_free()
 	for elb in [elbow, elbowNorth, elbowEast, elbowSouth, elbowWest]:
 		if elb:
@@ -82,18 +82,15 @@ func delete():
 				elb.remove_wheel()
 
 	self.queue_free()
-	if self == get_parent().activeWheelInstance:
-		get_parent().activeWheelInstance=null
-	if self == get_parent().hoveredWheelInstance:
-		get_parent().hoveredWheelInstance=null
-	print("finished deleting wheel")
+	if self == get_parent().hoveredObjInstance:
+		get_parent().hoveredObjInstance=null
 	
 func _on_WheelBody_mouse_entered():
 	print("hovering wheel")
-	get_parent().hoveredWheelInstance=self
+	get_parent().hoveredObjInstance=self
 
 
 func _on_WheelBody_mouse_exited():
-	if get_parent().hoveredWheelInstance == self:
-		get_parent().hoveredWheelInstance=null
+	if get_parent().hoveredObjInstance == self:
+		get_parent().hoveredObjInstance=null
 

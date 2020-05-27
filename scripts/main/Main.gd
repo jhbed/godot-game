@@ -2,13 +2,12 @@ extends Node2D
 
 var gravityOn=true
 
-var MULTITOOL = preload("res://scenes/MultiTool.tscn")
-var multiTool
 
-var lineToolOn=true
-var eraseToolOn=false
-var moveToolOn=false
-var wheelToolOn=false
+
+var state = globals.TOOLS.LINETOOL
+
+var MULTITOOL = preload("res://scenes/main/MultiTool.tscn")
+var multiTool
 
 var heldObject=null
 
@@ -16,11 +15,11 @@ func _input(event):
 	
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
 		
-		if event.is_pressed() and lineToolOn:
+		if event.is_pressed() and state == globals.TOOLS.LINETOOL:
 			multiTool.start_drawing_line()
 			
-		elif event.is_pressed() and wheelToolOn:
-			multiTool.init_new_wheel()
+		elif event.is_pressed() and state in globals.PHYS_OBJECTS:
+			multiTool.init_new_object(state)
 			
 		elif heldObject and !event.is_pressed():
 			heldObject.drop(Input.get_last_mouse_speed())
@@ -55,13 +54,13 @@ func set_scene_gravity():
 
 #observer callback
 func _on_draggable_clicked(object):
-	#print("draggable clicked ", object.name)
-	if eraseToolOn:
+	print("draggable clicked ", object.name)
+	if state == globals.TOOLS.ERASETOOL:
 		object.delete()
-	elif !heldObject and moveToolOn:
+	elif !heldObject and state == globals.TOOLS.MOVETOOL:
 		heldObject = object
 		heldObject.pickup()
-	elif heldObject and moveToolOn:
+	elif heldObject and state == globals.TOOLS.MOVETOOL:
 		heldObject.drop()
 	
 func log_state():

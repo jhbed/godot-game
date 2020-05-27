@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=2]
 
-[ext_resource path="res://scripts/PlayerRigid.gd" type="Script" id=1]
+[ext_resource path="res://scripts/player_controllers/PlayerRigid.gd" type="Script" id=1]
 [ext_resource path="res://textures/guy/guy walking big/guy_big6.png" type="Texture" id=2]
 [ext_resource path="res://textures/guy/guy walking big/guy_big5.png" type="Texture" id=3]
 [ext_resource path="res://textures/guy/guy walking big/guy_big8.png" type="Texture" id=4]
@@ -10,6 +10,7 @@
 [ext_resource path="res://textures/guy/guy walking big/guy_big3.png" type="Texture" id=8]
 [ext_resource path="res://textures/guy/guy walking big/guy_big4.png" type="Texture" id=9]
 [ext_resource path="res://textures/guy/guy walking big/guy_big2.png" type="Texture" id=10]
+
 
 [sub_resource type="PhysicsMaterial" id=1]
 

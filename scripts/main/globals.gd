@@ -3,6 +3,11 @@ extends Node
 
 enum PHYS_LAYERS {WORLD, RODS, BG_RODS}
 
+#tools
+enum TOOLS {LINETOOL, ERASETOOL, MOVETOOL, WHEELTOOL, BG_LINE_TOOL, MOTORTOOL}
+
+const PHYS_OBJECTS = [TOOLS.WHEELTOOL, TOOLS.MOTORTOOL]
+
 signal gravity_change(gravityStatus)
 const GRAVITY_CHANGE_SIGNAL = "gravity_change"
 

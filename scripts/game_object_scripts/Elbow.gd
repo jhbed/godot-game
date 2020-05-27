@@ -6,10 +6,10 @@ var SOFTNESS = 0.3
 # var a = 2
 # var b = "text"
 var joints = Array()
-var wheelJoint = null
+var objJoint = null
 var rodCount = 0
 var attachedRods = Array()
-var attachedWheel = null
+var attachedObj = null
 var hub
 var active=false
 
@@ -47,13 +47,13 @@ func attach_rod(rod):
 	for otherRod in attachedRods:
 		rod.rb.add_collision_exception_with(otherRod.rb)
 		
-	if attachedWheel:
+	if attachedObj:
 		var isSide=false
-		for elb in attachedWheel.get_outer_elbows():
+		for elb in attachedObj.get_outer_elbows():
 			if elb == self:
 				isSide=true
 		if not isSide:
-			rod.rb.add_collision_exception_with(attachedWheel.rb)
+			rod.rb.add_collision_exception_with(attachedObj.rb)
 		
 	rod.rb.add_collision_exception_with(hub)
 	
@@ -64,42 +64,42 @@ func attach_rod(rod):
 	joint.position = hub.position
 	add_child(joint)
 	joint.set_node_a(hub.get_path())
-	joint.set_node_b(rod.get_node("Line").get_path())
+	joint.set_node_b(rod.get_node("Body").get_path())
 	joints.append(joint)
 	rodCount += 1
 	
 func remove_wheel():
 	print("removing wheel")
-	if wheelJoint:
-		wheelJoint.queue_free()
-	wheelJoint = null
-	attachedWheel = null
+	if objJoint:
+		objJoint.queue_free()
+	objJoint = null
+	attachedObj = null
 	
-func attach_wheel(wheel):
+func attach_obj(obj):
 	
 	for otherRod in attachedRods:
-		wheel.rb.add_collision_exception_with(otherRod.rb)
+		obj.rb.add_collision_exception_with(otherRod.rb)
 		
-	wheel.rb.add_collision_exception_with(hub)
+	obj.rb.add_collision_exception_with(hub)
 	
-	attachedWheel = wheel
+	attachedObj = obj
 	
-	wheelJoint = PinJoint2D.new()
-	wheelJoint.set_softness(SOFTNESS)
-	wheelJoint.set_visible(false)
-	wheelJoint.position = hub.position
-	add_child(wheelJoint)
-	wheelJoint.set_node_a(hub.get_path())
-	wheelJoint.set_node_b(wheel.get_node("WheelBody").get_path())
-	wheel.elbow = self
-	wheel.activate_torque()
+	objJoint = PinJoint2D.new()
+	objJoint.set_softness(SOFTNESS)
+	objJoint.set_visible(false)
+	objJoint.position = hub.position
+	add_child(objJoint)
+	objJoint.set_node_a(hub.get_path())
+	objJoint.set_node_b(obj.get_node("PhysBody").get_path())
+	obj.elbow = self
+	#obj.activate_torque()
 	
 	
 	
 func delete():
 	
-	if attachedWheel:
-		attachedWheel.elbow = null
+	if attachedObj:
+		attachedObj.elbow = null
 	
 	for rod in attachedRods:
 		if rod.startElbow == self:
@@ -125,7 +125,7 @@ func on_gravity_change(gravityStatus):
 		
 func remove_rod(rod):
 
-	var pathToLine = rod.get_node("Line").get_path()
+	var pathToLine = rod.get_node("Body").get_path()
 	var jointToDelete = null
 	
 	var idx = attachedRods.find(rod)

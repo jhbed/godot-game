@@ -1,17 +1,23 @@
 extends Node2D
 
 
-var ROD = preload("res://scenes/Rod.tscn")
-var ELBOW = preload("res://scenes/Elbow.tscn")
-var WHEEL = preload("res://scenes/Wheel.tscn")
+var ROD = preload("res://scenes/game_objects/Rod.tscn")
+var ELBOW = preload("res://scenes/game_objects/Elbow.tscn")
+var WHEEL = preload("res://scenes/game_objects/Wheel.tscn")
+var MOTOR = preload("res://scenes/game_objects/Motor.tscn")
+
+var _physics_objects = {
+	globals.TOOLS.WHEELTOOL : WHEEL,
+	globals.TOOLS.MOTORTOOL : MOTOR
+}
+
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 var lineIsActive = false
 var lineStart = Vector2(0,0)
 var activeLineEnd = Vector2()
-var hoveredWheelInstance = null
-var activeWheelInstance = null
+var hoveredObjInstance = null
 var canDrawLines = true
 var hoveredElbow=null
 var activeElbow=null
@@ -38,29 +44,6 @@ func _ready():
 func _physics_process(delta):
 	update()	
 
-func init_new_wheel():
-	#inits a new wheel. It is possible a rod exists here so 
-	#put it on the rod if that is the case
-	if !canDrawLines or hoveredWheelInstance:
-		return
-		
-	var elbow
-	var pos = get_global_mouse_position()
-	if hoveredElbow:
-		elbow = hoveredElbow
-		pos = elbow.get_pos()
-	else:
-		elbow = init_new_elbow(pos)
-			
-	var wheelInst = WHEEL.instance()
-	wheelInst.init(pos, get_parent().gravityOn)
-	add_child(wheelInst)
-	
-	if backwards_wheel:
-		wheelInst.get_node("WheelBody/Sprite").flip_h=true
-	
-	elbow.attach_wheel(wheelInst)
-	wheelInst.activate_torque(backwards_wheel)
 
 func init_new_elbow(pos):
 	var elbow = ELBOW.instance()
@@ -69,7 +52,6 @@ func init_new_elbow(pos):
 	return elbow
 
 func init_new_rod():
-	
 	if not activeElbow:
 		activeElbow = init_new_elbow(lineStart)
 	if not hoveredElbow:
@@ -106,6 +88,26 @@ func start_drawing_line():
 func update_active_draw():
 	if lineIsActive:
 		activeLineEnd = get_global_mouse_position()
+		
+		
+func get_or_create_elbow():
+	if hoveredElbow:
+		return hoveredElbow
+	else:
+		return init_new_elbow(get_global_mouse_position())
+	
+			
+func init_new_object(tool_id):
+	
+	if !canDrawLines or hoveredObjInstance:
+		return
+	
+	var obj = _physics_objects[tool_id].instance()
+	var elbow = get_or_create_elbow()
+	var pos = elbow.get_pos()
+	obj.init(pos, get_parent().gravityOn)
+	add_child(obj)
+	elbow.attach_obj(obj)
 		
 
 

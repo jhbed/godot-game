@@ -1,0 +1,58 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://textures/game_item_textures/wheel.png" type="Texture" id=1]
+[ext_resource path="res://textures/game_item_textures/bg_line_tool.png" type="Texture" id=2]
+[ext_resource path="res://scripts/tool_bar/Toolbar.gd" type="Script" id=3]
+[ext_resource path="res://textures/game_item_textures/line_tool.png" type="Texture" id=4]
+[ext_resource path="res://scenes/tool_bar_scenes/ToolBarTool.tscn" type="PackedScene" id=5]
+[ext_resource path="res://textures/game_item_textures/erase_tool.png" type="Texture" id=6]
+[ext_resource path="res://textures/game_item_textures/move_tool.png" type="Texture" id=7]
+[ext_resource path="res://textures/game_item_textures/motor_simple_active_texture.png" type="Texture" id=8]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 310, 50 )
+
+[node name="Toolbar" type="Node2D"]
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 3 )
+
+[node name="ToolbarArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ToolbarArea"]
+position = Vector2( 50, 0 )
+shape = SubResource( 1 )
+
+[node name="Tools" type="Node2D" parent="."]
+
+[node name="Line" parent="Tools" instance=ExtResource( 5 )]
+position = Vector2( -200, 0 )
+texture = ExtResource( 4 )
+isActive = true
+
+[node name="BgLine" parent="Tools" instance=ExtResource( 5 )]
+position = Vector2( -100, 0 )
+tool_id = 4
+texture = ExtResource( 2 )
+
+[node name="Move" parent="Tools" instance=ExtResource( 5 )]
+tool_id = 2
+texture = ExtResource( 7 )
+
+[node name="Erase" parent="Tools" instance=ExtResource( 5 )]
+position = Vector2( 100, 0 )
+tool_id = 1
+texture = ExtResource( 6 )
+
+[node name="Wheel" parent="Tools" instance=ExtResource( 5 )]
+position = Vector2( 200, 0 )
+tool_id = 3
+texture = ExtResource( 1 )
+textureScale = Vector2( 0.3, 0.3 )
+
+[node name="Motor" parent="Tools" instance=ExtResource( 5 )]
+position = Vector2( 300, 0 )
+tool_id = 5
+texture = ExtResource( 8 )
+textureScale = Vector2( 60, 60 )
+[connection signal="mouse_entered" from="ToolbarArea" to="." method="_on_ToolbarArea_mouse_entered"]
+[connection signal="mouse_exited" from="ToolbarArea" to="." method="_on_ToolbarArea_mouse_exited"]
