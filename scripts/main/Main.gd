@@ -44,17 +44,17 @@ func _ready():
 				#Vector2.ZERO)
 func set_scene_gravity():
 	gravityOn = not gravityOn
-	if gravityOn:
-		print("Gravity ON")
-	else:
-		print("Gravity OFF")
+	#if gravityOn:
+		#print("Gravity ON")
+	#else:
+		#print("Gravity OFF")
 	globals.emit_signal(globals.GRAVITY_CHANGE_SIGNAL, gravityOn)
 #	for obj in rods:
 #		obj.set_mode(gravityOn)
 
 #observer callback
 func _on_draggable_clicked(object):
-	print("draggable clicked ", object.name)
+	#print("draggable clicked ", object.name)
 	if state == globals.TOOLS.ERASETOOL:
 		object.delete()
 	elif !heldObject and state == globals.TOOLS.MOVETOOL:

@@ -7,7 +7,7 @@ var collider
 var elbow
 var deleted=false
 
-var obj_type = globals.TOOLS.MOTORTOOL
+const obj_type = globals.TOOLS.MOTORTOOL
 
 func _ready():
 	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "set_mode")

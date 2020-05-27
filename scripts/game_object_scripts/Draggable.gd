@@ -34,7 +34,7 @@ func _physics_process(delta):
 		
 
 func get_assoc_elbow():
-	if self.name == 'PhysBody':
+	if get_parent().obj_type in globals.PHYS_OBJECTS:
 		return get_parent().elbow
 	else:
 		return get_parent().startElbow
@@ -92,11 +92,13 @@ func traverse_and_set_mode(elbow, visited={}, newMode=RigidBody2D.MODE_STATIC):
 	return count
 	
 func traverse_and_move_graph(elbow, visited={}, delta=Vector2.ZERO):
+	
 	elbow.hub.transform.origin += delta
 	visited[elbow] = 1
 	var count = 1
 	
 	if elbow.attachedObj:
+		print(elbow.attachedObj.name)
 		elbow.attachedObj.rb.transform.origin += delta
 		for elb in elbow.attachedObj.get_outer_elbows():
 			elb.hub.transform.origin += delta
@@ -113,7 +115,6 @@ func traverse_and_move_graph(elbow, visited={}, delta=Vector2.ZERO):
 			count += traverse_and_move_graph(rod.startElbow, visited, delta)
 		if rod.endElbow != elbow and not visited.has(rod.endElbow):
 			count += traverse_and_move_graph(rod.endElbow, visited, delta)
-			
 	return count
 
 func _on_SelectableArea_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:

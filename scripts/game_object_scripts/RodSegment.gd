@@ -12,6 +12,7 @@ var endElbow=null
 var hovering=false
 var deleted=false
 var bg = false
+const obj_type = globals.TOOLS.LINETOOL
 
 func _ready():
 	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "on_gravity_change")

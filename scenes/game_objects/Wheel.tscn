@@ -19,6 +19,7 @@ script = ExtResource( 1 )
 shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="PhysBody"]
+visible = false
 scale = Vector2( 0.2, 0.2 )
 texture = ExtResource( 2 )
 [connection signal="mouse_entered" from="PhysBody" to="." method="_on_WheelBody_mouse_entered"]

@@ -10,7 +10,7 @@ var rb
 var current_torque=0
 var elbow=null
 var deleted=false
-var obj_type = globals.TOOLS.WHEELTOOL
+const obj_type = globals.TOOLS.WHEELTOOL
 
 #elbows placed on the edges
 var elbowNorth
