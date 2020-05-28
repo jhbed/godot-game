@@ -34,6 +34,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
+	
 	var is_on_ground := state.get_contact_count() > 0 and int(state.get_contact_collider_position(0).y) >= int(global_position.y)
 	
 	var move_direction := get_move_direction()

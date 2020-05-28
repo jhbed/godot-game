@@ -11,7 +11,6 @@
 [ext_resource path="res://textures/guy/guy walking big/guy_big4.png" type="Texture" id=9]
 [ext_resource path="res://textures/guy/guy walking big/guy_big2.png" type="Texture" id=10]
 
-
 [sub_resource type="PhysicsMaterial" id=1]
 
 [sub_resource type="CapsuleShape2D" id=2]

@@ -41,8 +41,8 @@ func _draw():
 func _ready():
 	pass
 		
-func _physics_process(delta):
-	update()	
+func _process(delta):
+	update()
 
 
 func init_new_elbow(pos):
@@ -108,6 +108,8 @@ func init_new_object(tool_id):
 	obj.init(pos, get_parent().gravityOn)
 	add_child(obj)
 	elbow.attach_obj(obj)
+	
+
 		
 
 

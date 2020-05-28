@@ -6,7 +6,7 @@ var parent
 var priorMode = RigidBody2D.MODE_RIGID
 
 func _ready():
-	set_pickable(true) #this stupid thing had me pulling my hair out for hours... WHY????
+	set_pickable(true) #this stupid thing had me pulling my hair out for hours... WHY???
 	parent = get_parent()
 	connect("input_event", self, "_on_SelectableArea_input_event")
 	
@@ -35,6 +35,7 @@ func _physics_process(delta):
 
 func get_assoc_elbow():
 	if get_parent().obj_type in globals.PHYS_OBJECTS:
+		
 		return get_parent().elbow
 	else:
 		return get_parent().startElbow
@@ -51,6 +52,7 @@ func pickup():
 	print("Graph size ", traverse_and_set_mode(startElbow, {}, RigidBody2D.MODE_STATIC))
 
 func drop(impulse=Vector2.ZERO):
+	print("drop called")
 	if held:
 		#set_sleeping(false)
 		held = false
@@ -93,15 +95,14 @@ func traverse_and_set_mode(elbow, visited={}, newMode=RigidBody2D.MODE_STATIC):
 	
 func traverse_and_move_graph(elbow, visited={}, delta=Vector2.ZERO):
 	
-	elbow.hub.transform.origin += delta
+	elbow.hub.global_transform.origin += delta
 	visited[elbow] = 1
 	var count = 1
 	
 	if elbow.attachedObj:
-		print(elbow.attachedObj.name)
-		elbow.attachedObj.rb.transform.origin += delta
+		elbow.attachedObj.rb.global_transform.origin += delta
 		for elb in elbow.attachedObj.get_outer_elbows():
-			elb.hub.transform.origin += delta
+			elb.hub.global_transform.origin += delta
 	
 	for rod in elbow.attachedRods:
 		
@@ -110,7 +111,7 @@ func traverse_and_move_graph(elbow, visited={}, delta=Vector2.ZERO):
 		else:
 			visited[rod] = 1
 		
-		rod.rb.transform.origin += delta
+		rod.rb.global_transform.origin += delta
 		if rod.startElbow != elbow and not visited.has(rod.startElbow):
 			count += traverse_and_move_graph(rod.startElbow, visited, delta)
 		if rod.endElbow != elbow and not visited.has(rod.endElbow):
