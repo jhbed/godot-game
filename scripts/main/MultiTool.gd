@@ -21,6 +21,7 @@ var hoveredObjInstance = null
 var canDrawLines = true
 var hoveredElbow=null
 var activeElbow=null
+var activeMotor=null
 var bg=false
 var backwards_wheel=false
 

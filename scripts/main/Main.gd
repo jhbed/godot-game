@@ -31,8 +31,16 @@ func _input(event):
 	elif event is InputEventKey and event.is_pressed():
 		if event.scancode == KEY_G:
 			set_scene_gravity()	
-		if event.scancode == KEY_R:
-			multiTool.backwards_wheel = not multiTool.backwards_wheel
+			
+		if event.scancode == KEY_E and multiTool.activeMotor:
+				multiTool.activeMotor.apply_torque(1)
+				
+		if event.scancode == KEY_Q and multiTool.activeMotor:
+				multiTool.activeMotor.apply_torque(-1)
+				
+		
+			
+		
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

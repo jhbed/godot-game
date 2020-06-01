@@ -91,8 +91,7 @@ func attach_obj(obj):
 	add_child(objJoint)
 	objJoint.set_node_a(hub.get_path())
 	objJoint.set_node_b(obj.get_node("PhysBody").get_path())
-	obj.elbow = self
-	#obj.activate_torque()
+	obj.set_elbow(self)
 	
 	
 	

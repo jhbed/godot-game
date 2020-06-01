@@ -6,8 +6,13 @@ var rb
 var collider
 var elbow
 var deleted=false
+var attached_wheels : Array
 
 const obj_type = globals.TOOLS.MOTORTOOL
+
+func set_elbow(elb):
+	elbow=elb
+	attached_wheels = get_attached_wheels()
 
 func _ready():
 	globals.connect(globals.GRAVITY_CHANGE_SIGNAL, self, "set_mode")
@@ -26,6 +31,8 @@ func get_outer_elbows():
 func delete():
 	deleted=true
 	#rb.queue_free()
+	
+	
 	if elbow:
 		if elbow.rodCount <= 0:
 			elbow.delete()		
@@ -35,6 +42,9 @@ func delete():
 	self.queue_free()
 	if self == get_parent().hoveredObjInstance:
 		get_parent().hoveredObjInstance=null
+		
+	for wheel in attached_wheels:
+		wheel.rb.set_applied_torque(0)
 		
 
 func get_attached_wheels():
@@ -51,27 +61,35 @@ func get_attached_wheels():
 	
 
 func set_mode(gravityStatus):
-	if gravityStatus:
-		rb.set_mode(RigidBody2D.MODE_RIGID)
-
-	else:
-		rb.set_mode(RigidBody2D.MODE_STATIC)
+	if not deleted:
+		if gravityStatus:
+			rb.set_mode(RigidBody2D.MODE_RIGID)
+	
+		else:
+			rb.set_mode(RigidBody2D.MODE_STATIC)
 
 
 func _on_PhysBody_mouse_entered():
 	#print(len(get_attached_wheels()))
-	
-	var attached_wheels = get_attached_wheels()
-	
-	print(len(attached_wheels))
-	
-	for wheel in attached_wheels:
-		wheel.activate_torque()
-		wheel.rb.set_sleeping(false)
-	
 	get_parent().hoveredObjInstance=self
 
 
 func _on_PhysBody_mouse_exited():
 	if get_parent().hoveredObjInstance == self:
 		get_parent().hoveredObjInstance=null
+		
+
+func apply_torque(amount):
+	for wheel in attached_wheels:
+		wheel.apply_torque(amount)
+		
+func _on_rb_right_click():
+	if get_parent().activeMotor:
+		get_parent().activeMotor.active_texture(false)
+	get_parent().activeMotor=self
+	active_texture(true)
+	
+func active_texture(isActive):
+	rb.get_node("ActiveTexture").visible= isActive
+	rb.get_node("InactiveTexture").visible= not isActive
+

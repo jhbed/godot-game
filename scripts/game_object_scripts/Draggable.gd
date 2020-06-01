@@ -1,4 +1,5 @@
 extends RigidBody2D
+signal right_clicked
 
 var held=false
 var clickDelta = Vector2.ZERO
@@ -9,6 +10,7 @@ func _ready():
 	set_pickable(true) #this stupid thing had me pulling my hair out for hours... WHY???
 	parent = get_parent()
 	connect("input_event", self, "_on_SelectableArea_input_event")
+	connect("right_clicked", get_parent(), "_on_rb_right_click")
 	
 	
 func delete():
@@ -123,3 +125,9 @@ func _on_SelectableArea_input_event(viewport: Node, event: InputEvent, shape_idx
 		and event.button_index == BUTTON_LEFT
 		and event.is_pressed()):
 		globals.emit_signal(globals.INTERACTIVE_OBJECT_CLICKED, self)
+		
+	if (event is InputEventMouseButton 
+		and event.button_index == BUTTON_RIGHT
+		and event.is_pressed()):
+			emit_signal("right_clicked")
+			

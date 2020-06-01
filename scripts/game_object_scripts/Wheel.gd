@@ -93,4 +93,14 @@ func _on_WheelBody_mouse_entered():
 func _on_WheelBody_mouse_exited():
 	if get_parent().hoveredObjInstance == self:
 		get_parent().hoveredObjInstance=null
+		
+func set_elbow(elb):
+	elbow=elb
+	
+func apply_torque(amount):
+	rb.applied_torque += ACTIVE_TORQUE * amount
+	if rb.applied_torque > ACTIVE_TORQUE:
+		rb.applied_torque = ACTIVE_TORQUE
+	if rb.applied_torque < -ACTIVE_TORQUE:
+		rb.applied_torque = -ACTIVE_TORQUE
 
