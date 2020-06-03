@@ -1,6 +1,6 @@
 extends Node2D
 
-const ACTIVE_TORQUE=40000
+signal wheel_deleted(wheel)
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -44,15 +44,6 @@ func _ready():
 	elbowSouth = setup_side_elbow(0, radius)
 	elbowWest = setup_side_elbow(-radius, 0)
 
-func activate_torque(backwards=false):
-	current_torque=ACTIVE_TORQUE
-	if backwards:
-		current_torque *= -1
-	rb.set_applied_torque(current_torque)
-func deactivate_torque():
-	current_torque=0
-	rb.set_applied_torque(current_torque)
-
 func set_mode(gravityStatus):
 	if gravityStatus:
 		rb.set_mode(RigidBody2D.MODE_RIGID)
@@ -84,6 +75,8 @@ func delete():
 	self.queue_free()
 	if self == get_parent().hoveredObjInstance:
 		get_parent().hoveredObjInstance=null
+		
+	emit_signal("wheel_deleted", self)
 	
 func _on_WheelBody_mouse_entered():
 	print("hovering wheel")
@@ -96,11 +89,10 @@ func _on_WheelBody_mouse_exited():
 		
 func set_elbow(elb):
 	elbow=elb
-	
-func apply_torque(amount):
-	rb.applied_torque += ACTIVE_TORQUE * amount
-	if rb.applied_torque > ACTIVE_TORQUE:
-		rb.applied_torque = ACTIVE_TORQUE
-	if rb.applied_torque < -ACTIVE_TORQUE:
-		rb.applied_torque = -ACTIVE_TORQUE
+		
+func _on_rod_delete(rod):
+	print("I can see that my friend was deleted")
+
+func _on_rb_right_click():
+	pass
 

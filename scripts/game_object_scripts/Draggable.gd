@@ -14,6 +14,7 @@ func _ready():
 	
 	
 func delete():
+	traverse_and_set_sleeping(get_assoc_elbow())
 	parent.delete()
 	
 
@@ -73,6 +74,25 @@ func traverse_and_count_elbows(elbow, visited={}):
 			count += traverse_and_count_elbows(rod.startElbow, visited)
 		if rod.endElbow != elbow and not visited.has(rod.endElbow):
 			count += traverse_and_count_elbows(rod.endElbow, visited)
+			
+	return count
+	
+func traverse_and_set_sleeping(elbow, visited={}, sleeping=false):
+	elbow.hub.set_sleeping(sleeping)
+	visited[elbow] = 1
+	var count = 1
+	
+	if elbow.attachedObj:
+		elbow.attachedObj.rb.set_sleeping(sleeping)
+		for elb in elbow.attachedObj.get_outer_elbows():
+			elb.hub.set_sleeping(sleeping)
+	
+	for rod in elbow.attachedRods:
+		rod.rb.set_sleeping(sleeping)
+		if rod.startElbow != elbow and not visited.has(rod.startElbow):
+			count += traverse_and_set_sleeping(rod.startElbow, visited, sleeping)
+		if rod.endElbow != elbow and not visited.has(rod.endElbow):
+			count += traverse_and_set_sleeping(rod.endElbow, visited, sleeping)
 			
 	return count
 	

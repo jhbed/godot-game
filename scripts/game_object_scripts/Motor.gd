@@ -1,5 +1,9 @@
 extends Node2D
 
+const ACTIVE_TORQUE=40000
+signal wheel_deleted
+
+var currentTorque = 0
 
 #motor must have a direct link to the things it is controlling
 var rb
@@ -32,6 +36,8 @@ func delete():
 	deleted=true
 	#rb.queue_free()
 	
+	get_parent().activeMotor=null
+	
 	
 	if elbow:
 		if elbow.rodCount <= 0:
@@ -56,6 +62,8 @@ func get_attached_wheels():
 				otherElbow.attachedObj and 
 				otherElbow.attachedObj.obj_type == globals.TOOLS.WHEELTOOL):
 				attachedWheels.append(otherElbow.attachedObj)
+				if not otherElbow.attachedObj.is_connected("wheel_deleted", self, "_on_attached_wheel_delete"):
+					otherElbow.attachedObj.connect("wheel_deleted", self, "_on_attached_wheel_delete")
 	return attachedWheels
 				
 	
@@ -80,8 +88,19 @@ func _on_PhysBody_mouse_exited():
 		
 
 func apply_torque(amount):
+	
+	currentTorque += ACTIVE_TORQUE * amount
+	if currentTorque > ACTIVE_TORQUE:
+		currentTorque = ACTIVE_TORQUE
+	if currentTorque < -ACTIVE_TORQUE:
+		currentTorque = -ACTIVE_TORQUE
+	
+	set_wheel_torque(currentTorque)
+		
+func set_wheel_torque(amt):
 	for wheel in attached_wheels:
-		wheel.apply_torque(amount)
+		if not wheel.deleted:
+			wheel.rb.set_applied_torque(amt);
 		
 func _on_rb_right_click():
 	if get_parent().activeMotor:
@@ -92,4 +111,13 @@ func _on_rb_right_click():
 func active_texture(isActive):
 	rb.get_node("ActiveTexture").visible= isActive
 	rb.get_node("InactiveTexture").visible= not isActive
+	
+func _on_rod_delete(rod):
+	set_wheel_torque(0)
+	attached_wheels = get_attached_wheels()
+	set_wheel_torque(currentTorque)
+	
+func _on_attached_wheel_delete(wheel):
+	attached_wheels.erase(wheel)
+
 

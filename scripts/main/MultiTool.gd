@@ -62,10 +62,11 @@ func init_new_rod():
 	rodInst.init(activeElbow.get_pos(), hoveredElbow.get_pos(), get_parent().gravityOn, bg)
 	add_child(rodInst)
 	
-	activeElbow.attach_rod(rodInst)
 	rodInst.add_elbow(activeElbow, rodInst.ROD_START)
-	hoveredElbow.attach_rod(rodInst)
 	rodInst.add_elbow(hoveredElbow, rodInst.ROD_END)
+	activeElbow.attach_rod(rodInst)
+	hoveredElbow.attach_rod(rodInst)
+	
 
 	
 	activeElbow=null

@@ -2,6 +2,8 @@ extends Node2D
 
 enum {ROD_START, ROD_END, ROD_NONE}
 
+signal rod_deleted(rod)
+
 var startPosition=0
 var endPosition=0
 var rb
@@ -112,6 +114,9 @@ func add_elbow(elbow, idx):
 	if idx == ROD_END:
 		endElbow = elbow
 		
+	if elbow.attachedObj:
+		connect("rod_deleted", elbow.attachedObj, "_on_rod_delete")
+		
 func get_elbow(idx):
 	if idx == ROD_START and startElbow != null:
 		return startElbow
@@ -121,6 +126,7 @@ func get_elbow(idx):
 	
 
 func delete():
+	
 	deleted=true
 	for elbow in [startElbow, endElbow]:
 		if elbow:
@@ -131,6 +137,7 @@ func delete():
 				elbow.delete()
 	get_parent().rodCount -= 1
 	self.queue_free()
+	emit_signal("rod_deleted", self)
 
 func _on_SelectableArea_mouse_entered():
 	if get_parent().get_parent().state == globals.TOOLS.MOVETOOL:
@@ -138,4 +145,7 @@ func _on_SelectableArea_mouse_entered():
 
 func _on_SelectableArea_mouse_exited():
 	hovering=false
+	
+func _on_rb_right_click():
+	pass
 
