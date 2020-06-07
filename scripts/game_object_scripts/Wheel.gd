@@ -79,7 +79,6 @@ func delete():
 	emit_signal("wheel_deleted", self)
 	
 func _on_WheelBody_mouse_entered():
-	print("hovering wheel")
 	get_parent().hoveredObjInstance=self
 
 
@@ -91,7 +90,7 @@ func set_elbow(elb):
 	elbow=elb
 		
 func _on_rod_delete(rod):
-	print("I can see that my friend was deleted")
+	pass
 
 func _on_rb_right_click():
 	pass

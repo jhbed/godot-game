@@ -62,16 +62,12 @@ func set_scene_gravity():
 
 #observer callback
 func _on_draggable_clicked(object):
-	
-	print("draggable clicked ", object.name)
 	if state == globals.TOOLS.ERASETOOL:
 		object.delete()
 	elif !heldObject and state == globals.TOOLS.MOVETOOL:
-		print("PICKEDUP")
 		heldObject = object
 		heldObject.pickup()
 	elif heldObject and state == globals.TOOLS.MOVETOOL:
-		print("DROP")
 		heldObject.drop()
 	
 func log_state():

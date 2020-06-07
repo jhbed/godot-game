@@ -74,7 +74,6 @@ func attach_rod(rod):
 		attachedObj.set_wheel_torque(attachedObj.currentTorque)
 	
 func remove_wheel():
-	print("removing wheel")
 	if objJoint:
 		objJoint.queue_free()
 	objJoint = null
@@ -102,7 +101,6 @@ func attach_obj(obj):
 	obj.set_elbow(self)
 	
 	if obj.obj_type != globals.TOOLS.MOTORTOOL:
-		print("attaching wheel")
 		var motors = get_attached_motors()
 		for motor in motors:
 			motor.attached_wheels = motor.get_attached_wheels()

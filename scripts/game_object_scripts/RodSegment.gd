@@ -1,5 +1,8 @@
 extends Node2D
 
+#import serializer
+var SERIALIZER = preload("res://Serializer.gd")
+
 enum {ROD_START, ROD_END, ROD_NONE}
 
 signal rod_deleted(rod)
@@ -147,5 +150,12 @@ func _on_SelectableArea_mouse_exited():
 	hovering=false
 	
 func _on_rb_right_click():
-	pass
+	var s = SERIALIZER.new()
+	var d = s.serialize_graph(rb)
+	var save_game = File.new()
+	save_game.open("user://savegame.save", File.WRITE)
+	save_game.store_line(d)
+	save_game.close()
+	print(d)
+
 

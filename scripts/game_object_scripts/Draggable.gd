@@ -52,15 +52,14 @@ func pickup():
 	#mode = RigidBody2D.MODE_STATIC
 	held=true
 	var startElbow = get_assoc_elbow()
-	print("Graph size ", traverse_and_set_mode(startElbow, {}, RigidBody2D.MODE_STATIC))
+	traverse_and_set_mode(startElbow, {}, RigidBody2D.MODE_STATIC)
 
 func drop(impulse=Vector2.ZERO):
-	print("drop called")
 	if held:
 		#set_sleeping(false)
 		held = false
 		var startElbow = get_assoc_elbow()
-		print("Graph size ", traverse_and_set_mode(startElbow, {}, priorMode))
+		traverse_and_set_mode(startElbow, {}, priorMode)
 		apply_central_impulse(impulse)
 
 		
@@ -149,5 +148,6 @@ func _on_SelectableArea_input_event(viewport: Node, event: InputEvent, shape_idx
 	if (event is InputEventMouseButton 
 		and event.button_index == BUTTON_RIGHT
 		and event.is_pressed()):
+			print(get_filename())
 			emit_signal("right_clicked")
 			
