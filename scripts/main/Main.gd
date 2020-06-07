@@ -7,6 +7,7 @@ var gravityOn=true
 var state = globals.TOOLS.LINETOOL
 
 var MULTITOOL = preload("res://scenes/main/MultiTool.tscn")
+var SERIALIZER = preload("res://Serializer.gd")
 var multiTool
 
 var heldObject=null
@@ -37,6 +38,10 @@ func _input(event):
 				
 		if event.scancode == KEY_Q and multiTool.activeMotor:
 				multiTool.activeMotor.apply_torque(-1)
+				
+		if event.scancode == KEY_V:
+			var s = SERIALIZER.new()
+			s.deserialize_at_pos("user://savegame.save", get_global_mouse_position(), multiTool)
 				
 		
 			

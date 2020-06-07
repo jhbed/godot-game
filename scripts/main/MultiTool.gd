@@ -58,19 +58,22 @@ func init_new_rod():
 	if not hoveredElbow:
 		hoveredElbow = init_new_elbow(get_global_mouse_position())
 	
-	var rodInst = ROD.instance()
-	rodInst.init(activeElbow.get_pos(), hoveredElbow.get_pos(), get_parent().gravityOn, bg)
-	add_child(rodInst)
-	
-	rodInst.add_elbow(activeElbow, rodInst.ROD_START)
-	rodInst.add_elbow(hoveredElbow, rodInst.ROD_END)
-	activeElbow.attach_rod(rodInst)
-	hoveredElbow.attach_rod(rodInst)
-	
-
-	
+	var rodInst = init_new_rod_on_elbows(activeElbow, hoveredElbow)
 	activeElbow=null
 	hoveredElbow=null
+	return rodInst
+	
+func init_new_rod_on_elbows(elbow1, elbow2, is_bg=bg):
+	var rodInst = ROD.instance()
+	rodInst.init(elbow1.get_pos(), elbow2.get_pos(), get_parent().gravityOn, is_bg)
+	add_child(rodInst)
+
+	rodInst.add_elbow(elbow1, rodInst.ROD_START)
+	rodInst.add_elbow(elbow2, rodInst.ROD_END)
+	elbow1.attach_rod(rodInst)
+	elbow2.attach_rod(rodInst)
+	
+	return rodInst
 		
 	
 func start_drawing_line():
@@ -104,12 +107,15 @@ func init_new_object(tool_id):
 	if !canDrawLines or hoveredObjInstance:
 		return
 	
-	var obj = _physics_objects[tool_id].instance()
 	var elbow = get_or_create_elbow()
-	var pos = elbow.get_pos()
-	obj.init(pos, get_parent().gravityOn)
+	return init_new_object_on_elbow(tool_id, elbow)
+	
+func init_new_object_on_elbow(tool_id, elbow):
+	var obj = _physics_objects[int(tool_id)].instance()
+	obj.init(elbow.get_pos(), get_parent().gravityOn)
 	add_child(obj)
 	elbow.attach_obj(obj)
+	return obj
 	
 
 		
