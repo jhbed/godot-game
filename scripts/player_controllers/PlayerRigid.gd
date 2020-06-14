@@ -1,5 +1,7 @@
 extends RigidBody2D
 
+var gravityZone = null
+
 const MAX_ZOOM = 1.40
 const MIN_ZOOM = 0.55
 
@@ -22,6 +24,24 @@ export var jump_force := 150.0
 
 var _state: int = IDLE
 var _direction = 1
+
+func _physics_process(delta: float) -> void:
+	var rot = get_physics_rotation()
+	set_rotation(rot)
+
+func _ready():
+	pass
+	#rotate(PI)
+	
+func get_physics_rotation():
+	return Vector2.DOWN.angle_to(get_gravity_vector())
+
+func get_gravity_vector():
+	if gravityZone == null:
+		return Vector2.DOWN
+	return (gravityZone.get_global_transform().origin - 
+			get_global_transform().origin).normalized()
+	
 
 func _input(event: InputEvent) -> void:
 	
@@ -49,7 +69,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 			if move_direction.x:
 				change_state(RUN)
 			elif is_on_ground and Input.is_action_just_pressed("ui_up"):
-				apply_central_impulse(Vector2.UP * jump_force)
+				jump()
 		RUN:
 			if is_on_ground:
 				$AnimatedSprite.play("run")
@@ -58,18 +78,28 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 			elif state.get_contact_count() == 0:
 				change_state(AIR)
 			elif is_on_ground and Input.is_action_just_pressed("ui_up"):
-				apply_central_impulse(Vector2.UP * jump_force)
+				jump()
 				change_state(AIR)
 				$AnimatedSprite.play("jump")
 			else:
-				state.linear_velocity.x = move_direction.x * move_speed
+				state.linear_velocity = move(state, move_direction)
+				#state.linear_velocity.x = move_direction.x * move_speed
 				
 		AIR:
 			if move_direction.x:
 				state.linear_velocity.x += move_direction.x * air_speed
 			if is_on_ground and just_aired_timer.is_stopped():
 				change_state(IDLE)
-				
+
+func jump():
+	apply_central_impulse(-get_gravity_vector() * jump_force)
+	
+func move(state, direction):
+	var baseDir = state.linear_velocity
+	baseDir.x = direction.x * move_speed
+	return baseDir.rotated(rotation)
+	
+		
 func change_state(target_state: int) -> void:
 	if not target_state in _transitions[_state]:
 		return
@@ -90,14 +120,14 @@ func get_move_direction() -> Vector2:
 	return Vector2(
 		Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
 		0
-	)
+	).rotated(rotation)
 	
 func zoom(amount):
-	var zoomFactor := 0.01
+	var zoomFactor := 0.05
 	var origZoom : Vector2 = $Camera2D.get_zoom()
 	var appliedAmount = origZoom.x + amount * zoomFactor
-	if appliedAmount > MAX_ZOOM or appliedAmount < MIN_ZOOM:
-		return
+#	if appliedAmount > MAX_ZOOM or appliedAmount < MIN_ZOOM:
+#		return
 	var newZoom := Vector2(appliedAmount, appliedAmount)
 	$Camera2D.set_zoom(newZoom)
 	$Camera2D.offset.y -= amount*2

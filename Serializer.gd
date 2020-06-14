@@ -104,12 +104,14 @@ func serialize_wheel(wheel):
 	
 func serialize_motor(motor):
 	var pos = motor.rb.global_transform.origin - startPos
-	return {
+	var obj = {
 		'id' : currentObjId,
 		'obj_type' : globals.TOOLS.MOTORTOOL,
 		'pos_x' : pos.x,
 		'pos_y' : pos.y 
 	}
+	objs[currentObjId] = obj
+	return currentObjId
 	
 func deserialize_at_pos(filename, pos, multiTool):
 	

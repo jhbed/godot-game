@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scripts/main/Main.gd" type="Script" id=1]
 [ext_resource path="res://scenes/Main/Background.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/game_objects/Planet.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/player_scenes/PlayerRigid.tscn" type="PackedScene" id=8]
 [ext_resource path="res://textures/game_item_textures/ground.jpg" type="Texture" id=11]
 
@@ -27,6 +28,9 @@ scale = Vector2( 10000, 426.198 )
 texture = ExtResource( 11 )
 
 [node name="PlayerRigid" parent="." instance=ExtResource( 8 )]
-position = Vector2( 511.052, 521.492 )
+position = Vector2( 1416.05, 276.667 )
 
 [node name="Background" parent="." instance=ExtResource( 2 )]
+
+[node name="Planet" parent="." instance=ExtResource( 3 )]
+position = Vector2( 400.045, 468.344 )

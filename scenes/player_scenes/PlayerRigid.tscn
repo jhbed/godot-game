@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://scripts/player_controllers/PlayerRigid.gd" type="Script" id=1]
 [ext_resource path="res://textures/guy/guy walking big/guy_big6.png" type="Texture" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://textures/guy/guy walking big/guy_big3.png" type="Texture" id=8]
 [ext_resource path="res://textures/guy/guy walking big/guy_big4.png" type="Texture" id=9]
 [ext_resource path="res://textures/guy/guy walking big/guy_big2.png" type="Texture" id=10]
+[ext_resource path="res://scenes/tool_bar_scenes/Toolbar.tscn" type="PackedScene" id=11]
 
 [sub_resource type="PhysicsMaterial" id=1]
 
@@ -22,15 +23,15 @@ animations = [ {
 "name": "idle",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 7 ), ExtResource( 10 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 3 ), ExtResource( 2 ), ExtResource( 5 ), ExtResource( 4 ) ],
-"loop": true,
-"name": "run",
-"speed": 15.0
-}, {
 "frames": [ ExtResource( 6 ) ],
 "loop": true,
 "name": "jump",
 "speed": 5.0
+}, {
+"frames": [ ExtResource( 7 ), ExtResource( 10 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 3 ), ExtResource( 2 ), ExtResource( 5 ), ExtResource( 4 ) ],
+"loop": true,
+"name": "run",
+"speed": 15.0
 } ]
 
 [node name="PlayerRigid" type="RigidBody2D"]
@@ -57,5 +58,9 @@ animation = "idle"
 playing = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
-offset = Vector2( 0, -200 )
+offset = Vector2( 0, -100 )
+rotating = true
 current = true
+
+[node name="Toolbar" parent="Camera2D" instance=ExtResource( 11 )]
+position = Vector2( 322.824, -368.941 )
