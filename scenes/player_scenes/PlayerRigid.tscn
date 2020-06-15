@@ -10,7 +10,7 @@
 [ext_resource path="res://textures/guy/guy walking big/guy_big3.png" type="Texture" id=8]
 [ext_resource path="res://textures/guy/guy walking big/guy_big4.png" type="Texture" id=9]
 [ext_resource path="res://textures/guy/guy walking big/guy_big2.png" type="Texture" id=10]
-[ext_resource path="res://scenes/tool_bar_scenes/Toolbar.tscn" type="PackedScene" id=11]
+[ext_resource path="res://scenes/Main/Background2.tscn" type="PackedScene" id=11]
 
 [sub_resource type="PhysicsMaterial" id=1]
 
@@ -58,9 +58,6 @@ animation = "idle"
 playing = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
-offset = Vector2( 0, -100 )
-rotating = true
 current = true
 
-[node name="Toolbar" parent="Camera2D" instance=ExtResource( 11 )]
-position = Vector2( 322.824, -368.941 )
+[node name="Background2" parent="." instance=ExtResource( 11 )]

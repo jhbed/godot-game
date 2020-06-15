@@ -16,7 +16,6 @@ collision_layer = 2
 mass = 0.102041
 physics_material_override = SubResource( 1 )
 gravity_scale = 2.0
-linear_damp = 1.0
 angular_damp = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hub"]

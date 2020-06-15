@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://textures/game_item_textures/thruster.png" type="Texture" id=1]
+[ext_resource path="res://scripts/game_object_scripts/Draggable.gd" type="Script" id=2]
+[ext_resource path="res://scripts/game_object_scripts/Thruster.gd" type="Script" id=3]
+
+[sub_resource type="ConvexPolygonShape2D" id=1]
+points = PoolVector2Array( 25, 13, -25, 13, -10, -13, 10, -13 )
+
+[node name="Thruster" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="PhysBody" type="RigidBody2D" parent="."]
+collision_layer = 2
+collision_mask = 3
+can_sleep = false
+script = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PhysBody"]
+position = Vector2( 0, -10 )
+scale = Vector2( 1.4, 1.4 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="PhysBody"]
+position = Vector2( 0, -10 )
+scale = Vector2( 0.07, 0.07 )
+texture = ExtResource( 1 )
+[connection signal="mouse_entered" from="PhysBody" to="." method="_on_Body_mouse_entered"]
+[connection signal="mouse_exited" from="PhysBody" to="." method="_on_Body_mouse_exited"]

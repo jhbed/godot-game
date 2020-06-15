@@ -5,10 +5,12 @@ var ROD = preload("res://scenes/game_objects/Rod.tscn")
 var ELBOW = preload("res://scenes/game_objects/Elbow.tscn")
 var WHEEL = preload("res://scenes/game_objects/Wheel.tscn")
 var MOTOR = preload("res://scenes/game_objects/Motor.tscn")
+var THRUSTER = preload("res://scenes/game_objects/Thruster.tscn")
 
 var _physics_objects = {
 	globals.TOOLS.WHEELTOOL : WHEEL,
-	globals.TOOLS.MOTORTOOL : MOTOR
+	globals.TOOLS.MOTORTOOL : MOTOR,
+	globals.TOOLS.THRUSTERTOOL : THRUSTER
 }
 
 # Declare member variables here. Examples:
@@ -22,6 +24,7 @@ var canDrawLines = true
 var hoveredElbow=null
 var activeElbow=null
 var activeMotor=null
+var activeThruster=null
 var bg=false
 var backwards_wheel=false
 

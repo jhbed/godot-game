@@ -2,7 +2,7 @@ extends RigidBody2D
 
 var gravityZone = null
 
-const MAX_ZOOM = 1.40
+const MAX_ZOOM = 2.0
 const MIN_ZOOM = 0.55
 
 enum {
@@ -27,6 +27,8 @@ var _direction = 1
 
 func _physics_process(delta: float) -> void:
 	var rot = get_physics_rotation()
+	
+	#get_node("Background2").rotate(get_rotation() - rot)
 	set_rotation(rot)
 
 func _ready():
@@ -51,6 +53,13 @@ func _input(event: InputEvent) -> void:
 			zoom(1)
 		if event.button_index == BUTTON_WHEEL_DOWN:
 			zoom(-1)
+			
+	if event is InputEventKey and event.is_pressed():
+		
+		if event.scancode == KEY_I:
+			zoom(1)
+		if event.scancode == KEY_O:
+			zoom(-1)
 
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
@@ -58,10 +67,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	var is_on_ground := state.get_contact_count() > 0 and int(state.get_contact_collider_position(0).y) >= int(global_position.y)
 	
 	var move_direction := get_move_direction()
-	
-	if abs(move_direction.x - _direction) == 2:
-		$AnimatedSprite.flip_h = not $AnimatedSprite.flip_h
-		_direction = move_direction.x
+
 	
 	match _state:
 		IDLE:
@@ -82,7 +88,8 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 				change_state(AIR)
 				$AnimatedSprite.play("jump")
 			else:
-				state.linear_velocity = move(state, move_direction)
+				#state.linear_velocity = move(state, move_direction)
+				state.linear_velocity = get_move_direction() * move_speed
 				#state.linear_velocity.x = move_direction.x * move_speed
 				
 		AIR:
@@ -117,17 +124,21 @@ func enter_state() -> void:
 				
 	
 func get_move_direction() -> Vector2:
-	return Vector2(
+	var dir = Vector2(
 		Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
 		0
-	).rotated(rotation)
+	)
+	if abs(dir.x - _direction) == 2:
+		_direction = dir.x
+		$AnimatedSprite.flip_h = not $AnimatedSprite.flip_h
+	return dir.rotated(rotation)
 	
 func zoom(amount):
 	var zoomFactor := 0.05
 	var origZoom : Vector2 = $Camera2D.get_zoom()
 	var appliedAmount = origZoom.x + amount * zoomFactor
-#	if appliedAmount > MAX_ZOOM or appliedAmount < MIN_ZOOM:
-#		return
+	if appliedAmount > MAX_ZOOM or appliedAmount < MIN_ZOOM:
+		return
 	var newZoom := Vector2(appliedAmount, appliedAmount)
 	$Camera2D.set_zoom(newZoom)
 	$Camera2D.offset.y -= amount*2

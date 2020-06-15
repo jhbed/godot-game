@@ -34,14 +34,21 @@ func _input(event):
 			set_scene_gravity()	
 			
 		if event.scancode == KEY_E and multiTool.activeMotor:
-				multiTool.activeMotor.apply_torque(1)
+			multiTool.activeMotor.apply_torque(1)
 				
 		if event.scancode == KEY_Q and multiTool.activeMotor:
-				multiTool.activeMotor.apply_torque(-1)
+			multiTool.activeMotor.apply_torque(-1)
+				
+		if event.scancode == KEY_SPACE and multiTool.activeThruster:
+			multiTool.activeThruster.thrusting=true
 				
 		if event.scancode == KEY_V:
 			var s = SERIALIZER.new()
 			s.deserialize_at_pos("user://savegame.save", get_global_mouse_position(), multiTool)
+			
+	elif event is InputEventKey and event.scancode == KEY_SPACE and multiTool.activeThruster:
+		multiTool.activeThruster.thrusting=false
+		
 				
 		
 			

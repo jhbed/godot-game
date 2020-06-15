@@ -33,8 +33,8 @@ func draw_circle_custom(radius, maxerror = 0.25):
 		var v = Vector2(sin(phi), cos(phi))
 		points.push_back(v * radius)
 
-	draw_colored_polygon(points, Color(1.0, 1.0, 1.0))
-	draw_circle($GravityZone.gravity_vec, 50, ColorN("Red"))
+	draw_colored_polygon(points, ColorN("cyan"))
+	#draw_circle($GravityZone.gravity_vec, 50, ColorN("Red"))
 
 
 func _on_GravityZone_body_entered(body: Node) -> void:
