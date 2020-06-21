@@ -17,8 +17,8 @@ var ELBOW = preload("res://scenes/game_objects/Elbow.tscn")
 
 func _physics_process(delta: float) -> void:
 	if thrusting:
-		print("thrusting")
-		$PhysBody.apply_central_impulse(Vector2.UP * 30)
+		$PhysBody.apply_central_impulse(Vector2.UP.rotated(rb.rotation) * 30)
+	update()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -27,6 +27,14 @@ func _ready() -> void:
 	var pos2 = ($PhysBody/CollisionShape2D.position + points[3]) * $PhysBody/CollisionShape2D.scale.x + Vector2(0,6)
 	elbowLeft = setup_side_elbow(pos1.x, pos1.y)
 	elbowRight = setup_side_elbow(pos2.x, pos2.y)
+	
+func _draw() -> void:
+	if thrusting:
+		print("drawing")
+		for i in range(10):
+			var rand = randf() * 10
+			var randVec = Vector2(randf()-0.5,randf()-0.5) * 50
+			draw_circle(rb.global_position + randVec, rand, ColorN("Orange"))
 	
 func init(pos, gravityOn):
 	rb = get_node("PhysBody")

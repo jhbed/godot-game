@@ -1,8 +1,9 @@
 extends TileMap
 
+enum {TILE_WITH_COLLISION, TILE_WITHOUT_COLLISION}
+
 func _ready():
-	pass
-	#make_tilemap_circle(Vector2(0, 0), 1000);
+	make_tilemap_circle(Vector2(0, 0), 280);
 	
 func make_tilemap_circle(center_position, radius):
 	# The right half of the circle:
@@ -16,9 +17,9 @@ func make_tilemap_circle(center_position, radius):
 			if (relative_vector.length() < radius):
 				var tile_id
 				if relative_vector.length() - radius > -1:
-					tile_id = 0
-				else:
 					tile_id = 1
+				else:
+					tile_id = 0
 				self.set_cell(x, y, tile_id)
 				self.set_cell(-x, y, tile_id)
 				self.set_cell(-x, -y, tile_id)

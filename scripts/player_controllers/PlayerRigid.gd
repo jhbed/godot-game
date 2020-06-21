@@ -43,6 +43,18 @@ func get_gravity_vector():
 		return Vector2.DOWN
 	return (gravityZone.get_global_transform().origin - 
 			get_global_transform().origin).normalized()
+			
+func ground_check(state):
+	var is_on_ground
+	if state.get_contact_count() > 0:
+		var down = get_gravity_vector()
+		var rot = down.angle_to(Vector2.DOWN)
+		
+		is_on_ground = int(state.get_contact_collider_position(0).rotated(rot).y) >= int(global_position.rotated(rot).y)
+	else:
+		is_on_ground=false
+	return is_on_ground
+	
 	
 
 func _input(event: InputEvent) -> void:
@@ -64,10 +76,8 @@ func _input(event: InputEvent) -> void:
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	
-	var is_on_ground := state.get_contact_count() > 0 and int(state.get_contact_collider_position(0).y) >= int(global_position.y)
-	
+	var is_on_ground = ground_check(state)
 	var move_direction := get_move_direction()
-
 	
 	match _state:
 		IDLE:
@@ -104,6 +114,7 @@ func jump():
 func move(state, direction):
 	var baseDir = state.linear_velocity
 	baseDir.x = direction.x * move_speed
+	print(rotation)
 	return baseDir.rotated(rotation)
 	
 		
